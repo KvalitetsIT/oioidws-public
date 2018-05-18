@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments/header :: header (title=#{html.page.wsc.list.title})" />
+
+<body>
+	<div th:replace="fragments/navbar :: navbar-right" />
+
+	<div class="container-fluid">
+		<div class="row">
+			<div th:replace="fragments/navbar :: sidebar" />
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+					<h1 th:text="#{html.navbar.wsc}" class="h2" />
+					<button type="button" class="btn btn-primary" aria-label="Left Align" data-toggle="modal" data-target="#wscModal">
+						<em class="fa fa-plus"></em>
+						<span th:text="#{html.page.wsc.list.button.new}"/>
+					</button>
+				</div>
+				<div class="table-responsive">
+					<table id="listTable" class="table table-striped table-hover">
+						<thead>
+							<tr class="d-flex">
+								<th class="col-md-1" th:text="#{html.entity.wsc.id}" />
+								<th class="col-md-2" th:text="#{html.entity.wsc.name}" />
+								<th class="col-md-8" th:text="#{html.entity.wsc.subject}" />
+								<th class="col-md-1" th:text="#{html.control.operations}" />
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="wsc : ${wscList}" class="d-flex">
+								<td class="col-md-1" th:text="${wsc.id}" />
+								<td class="col-md-2" th:text="${wsc.name}" />
+								<td class="col-md-8" th:text="${wsc.subject}" />
+								<td class="col-md-1">
+									<a th:href="@{/wsc/view/{id}(id=${wsc.id})}"><em class="fa fa-search" /></a>
+									<a th:href="@{/wsc/edit/{id}(id=${wsc.id})}"><em class="fa fa-pencil" /></a>
+									<a href="#" onClick="remove(this)" th:attr="data-id=${wsc.id}"><em class="fa fa-remove" /></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="wscModal" tabindex="-1" role="dialog" aria-labelledby="wscModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="wscModalLabel" th:text="#{html.page.wsc.list.modal.title}"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="wscForm" method="POST" th:action="@{/wsc/new}" enctype="application/json">
+						<input id="id" type="hidden" name="id" />
+						<input id="certificate" type="hidden" name="certificate" />
+						<div class="form-group">
+							<label for="name" class="col-form-label" th:text="#{html.entity.wsc.name}"></label>
+							<input type="text" name="name" class="form-control" id="name"/>
+						</div>
+						<div class="form-group">
+							<label for="fakecert" class="col-form-label" th:text="#{html.entity.wsc.certificate}"></label>
+							<div class="result-icon"></div>
+							<textarea class="form-control" readonly="readonly" id="fakecert"></textarea>
+							<div class="input-group mb-3">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" name="certificateFile" id="certificateFile"/>
+									<label class="custom-file-label" for="certificateFile">Choose file</label>
+								</div>
+								<div class="input-group-append">
+									 <button class="btn btn-outline-secondary" type="button" onClick="processCertificate()">Upload</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{html.button.cancel} "/>
+					<button type="button" class="btn btn-primary" onClick="submitForm()" th:text="#{html.button.save} "/>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<nav th:replace="fragments/footer :: footer" />
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		
+		/*[+
+			var deleteURI = [[@{/wsc/delete/}]];
+			var urlList = [[@{/wsc/list}]]
+		+]*/
+		
+		var token = $("meta[name='_csrf']").attr("content");
+	
+		$('document').ready(function(){
+			
+			$('#wscModal').on('show.bs.modal', function(event) {
+				var modal = $(this);
+				$('.result-icon').replaceWith('<div class="result-icon"></div>');
+				$('#fakecert').show();
+				$('#id').val('');
+				$('#certificate').val('');
+				$('#name').text('');
+			});
+			
+		});
+
+		function processCertificate() {
+			$.ajax({
+				url : '/wsc/processCertificate',
+				type : "POST",
+				data : new FormData($("#wscForm")[0]),
+				enctype : 'multipart/form-data',
+				processData : false,
+				contentType : false,
+				cache : false,
+				success : function(data) {
+					// Handle upload success
+					$('#fakecert').hide();
+					$('.result-icon').replaceWith('<svg class="checkmark result-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>');
+					$('#certificate').val(data.certificate);
+				},
+				error : function() {
+					// Handle upload error
+					$('#fakecert').hide();
+					$('.result-icon').replaceWith('<div class="result-icon row align-items-center justify-content-center" style="padding: 36px 0px; color:red;"><em class="fa fa-5x fa-close"></em></div>');
+				}
+			});
+		}
+		
+		function submitForm(){
+			$('#wscForm').submit();
+		}
+
+		function remove(elem){
+			var elem = $(elem);
+			var id = elem.data('id');
+
+			$.ajax({
+				method : "POST",
+				headers : {
+					'X-CSRF-TOKEN' : token
+				},
+				url : deleteURI + id,
+				success : function() {
+					window.location.href = urlList;
+				}
+			});
+		}
+		
+		/*]]>*/
+	</script>
+</body>
+</html>

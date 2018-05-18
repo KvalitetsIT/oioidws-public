@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments/header :: header (title=#{html.page.wsc.view.title})" />
+<body>
+	<div th:replace="fragments/navbar :: navbar-right" />
+
+	<div class="container-fluid">
+		<div class="row">
+			<div th:replace="fragments/navbar :: sidebar" />
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+					<a th:href="@{/wsc/list}" class="btn btn-primary">
+						<em class="fa fa-arrow-left"></em>
+						<em class="fa fa-bars"></em>
+					</a>
+					<h1 class="h2"></h1>
+					<a th:href="@{/wsc/view/{id}(id=${wsc.id})}" class="btn btn-primary">
+						<em class="fa fa-pencil"></em>
+						View
+					</a>
+				</div>
+				<form>
+					<input th:field="${wsc.id}" type="hidden" />
+					<div class="form-group">
+						<label for="itSystem">Name</label>
+						<input th:field="${wsc.name}" class="form-control" id="name"/>
+					</div>
+					<div class="form-group">
+						<div class="form-group">
+							<label for="certificateFile" class="col-form-label" th:text="#{html.page.wsc.edit.certificate.upload}"></label>
+							<div class="result-icon"></div>
+							<div class="input-group mb-3">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" name="certificateFile" id="certificateFile"/>
+									<label class="custom-file-label" for="certificateFile">Choose file</label>
+								</div>
+								<div class="input-group-append">
+									 <button class="btn btn-outline-secondary" type="button" onClick="processCertificate()">Upload</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="granted_access">Granted Access</label>
+						<div class="col-sm-8">
+							<select th:field="*{wsc.webServiceProviders}" multiple="multiple" style="display:none" />
+
+							<select multiple="multiple" id="fakewsps" class="form-control">
+								<option th:each="wsp : ${wsps}" th:attr="data-entityId=${wsp.entityId}" th:value="${wsp.id}" th:text="${wsp.name}" th:selected="${#lists.contains(wsc.webServiceProviders, wsp)}"></option>
+							</select>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- /container -->
+
+	<nav th:replace="fragments/footer :: footer" />
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+			/*[+
+				var fieldUpdatedMsg = [[#{html.entity.wsc.updatedmsg}]];
+				var fieldNotUpdatedMsg = [[#{html.entity.wsc.failedupdatemsg}]];
+				var wrongCertFileMsg = [[#{html.entity.wsc.wrongCertFileMsg}]];
+			+]*/
+
+			var token = $("meta[name='_csrf']").attr("content");
+
+			$("document").ready(function() {
+				$("#name").change(handleChangeOnInput);
+				$("#subject").change(handleChangeOnInput);
+				
+				var selectedLabel = "Selected";
+				var unselectedLabel =  "Available";
+
+				var seletedFooter   = '<div class="footer">' + selectedLabel + '</div>';
+				var unseletedFooter = '<div class="footer">' + unselectedLabel + '</div>';
+				
+				$('#fakewsps').multiSelect(
+				{
+					'selectableFooter': unseletedFooter,
+					'selectionFooter': seletedFooter,
+					afterSelect: function(values){
+						var i=0;
+						for(i = 0; i < values.length; i++){
+							console.log("Hello");
+							ajaxPostChangeAccess('grant', values[i]);
+						}
+					},
+					afterDeselect: function(values){
+						var i=0;
+						for(i = 0; i < values.length; i++){
+							console.log("Hello");
+							ajaxPostChangeAccess('deny', values[i]);
+						}
+					}
+				});
+				
+				$.notifyDefaults({
+					allow_dismiss: false,
+					placement: {
+						from: 'top',
+						align:'center'
+					},
+					template: '<div data-notify="container" class="col-xs-11 col-sm-1 alert alert-{0}" role="alert">' +
+								'<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+								'<span data-notify="icon"></span> ' +
+								'<span data-notify="title">{1}</span> ' +
+								'<span data-notify="message">{2}</span>' +
+								'<div class="progress" data-notify="progressbar">' +
+									'<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+								'</div>' +
+								'<a href="{3}" target="{4}" data-notify="url"></a>' +
+							'</div>'
+				});
+				
+			});
+	
+			function processCertificate() {
+				$.ajax({
+					url : '/wsc/processCertificate',
+					type : "POST",
+					data : new FormData($('form')[0]),
+					enctype : 'multipart/form-data',
+					processData : false,
+					contentType : false,
+					cache : false,
+					success : function(data) {
+						// Handle upload success
+						$('#certificate').val(data.certificate);
+						handleChangeOnInput();
+					},
+					error : function() {
+						// Handle upload error
+						$.notify({
+							message: wrongCertFileMsg
+						},{
+							delay: 2000,
+							type: 'danger',
+						});
+					}
+				});
+			}
+			
+			function handleChangeOnInput() {
+				var objId = $("#id").val();
+				var objName = $("#name").val();
+				var objCertificate = $("#certificate").val();
+
+				var wsc = {
+					id: objId,
+					name: objName,
+					certificate: objCertificate
+				};
+	
+				$.ajax({
+					url: '/wsc/edit',
+					method: 'POST',
+					data: wsc,
+					headers: {
+						'X-CSRF-TOKEN': token
+					},
+					error: function(response) {
+						$.notify({
+							message: fieldNotUpdatedMsg
+						},{
+							delay: 2000,
+							type: 'danger',
+						});
+					},
+					success: function(response) {
+						$.notify({
+							message: fieldUpdatedMsg
+						},{
+							delay: 1000,
+							type: 'success',
+						});
+					}
+				});
+			}
+
+			function ajaxPostChangeAccess(type,wspid){
+				var id = /*[[${wsc.id}]]*/ 0;
+				$.ajax({
+					url: '/wsc/'+id+'/'+type+'access/'+wspid,
+					method: 'POST',
+					headers: {
+						'X-CSRF-TOKEN': token
+					},
+					error: function(response) {
+						$.notify({
+							message: fieldNotUpdatedMsg
+						},{
+							delay: 2000,
+							type: 'danger',
+						});
+					},
+					success: function(response) {
+						$.notify({
+							message: fieldUpdatedMsg
+						},{
+							delay: 1000,
+							type: 'success',
+						});
+					}
+				});
+			}
+		/*]]>*/
+	</script>
+</body>
+</html>

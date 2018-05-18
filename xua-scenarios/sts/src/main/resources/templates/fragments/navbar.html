@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<nav th:fragment="navbar-right" class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 navbar-blue">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">STS</a>
+<!-- 		<input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> -->
+<!-- 		<ul class="navbar-nav px-3"> -->
+<!-- 			<li class="nav-item text-nowrap"> -->
+<!-- 				<a class="nav-link" href="#">Sign out</a> -->
+<!-- 			</li> -->
+<!-- 		</ul> -->
+	</nav>
+
+	<nav th:fragment="sidebar" class="col-md-2 d-none d-md-block sidebar">
+		<div class="sidebar-sticky">
+			<ul class="nav flex-column">
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/wsc/list}"> <em class="fa fa-users"></em> <span th:text="#{html.navbar.wsc}"></span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/wsp/list}"> <em class="fa fa-sitemap"></em> <span th:text="#{html.navbar.wsp}"></span></a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</body>
+</html>

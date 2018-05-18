@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="fragments/header :: header (title=#{html.page.wsc.view.title})" />
+
+<body>
+	<div th:replace="fragments/navbar :: navbar-right" />
+
+	<div class="container-fluid">
+		<div class="row">
+			<div th:replace="fragments/navbar :: sidebar" />
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+					<a th:href="@{/wsc/list}" class="btn btn-primary">
+						<em class="fa fa-arrow-left"></em>
+						<em class="fa fa-bars"></em>
+					</a>
+					<h1 class="h2" th:text="#{html.page.wsc.view.header.text}"></h1>
+					<a th:href="@{/wsc/edit/{id}(id=${wsc.id})}" class="btn btn-primary">
+						<em class="fa fa-pencil"></em>
+						Edit
+					</a>
+				</div>
+				<form>
+					<div class="form-group">
+						<label for="idx">ID</label>
+						<input type="text" th:field="${wsc.id}" readonly="readonly" class="form-control" id="idx"/>
+					</div>
+					<div class="form-group">
+						<label for="itSystem">Name</label>
+						<input th:field="${wsc.name}" readonly="readonly" class="form-control" id="name"/>
+					</div>
+					<div class="form-group">
+						<label for="subject">Subject</label>
+						<input th:field="${wsc.subject}" readonly="readonly" class="form-control" id="subject"/>
+					</div>
+					<div class="form-group">
+						<label for="granted_access">Granted Access</label>
+						<div class="table-responsive">
+							<table id="listTable" class="table table-striped table-hover">
+								<thead>
+									<tr class="d-flex">
+										<th class="col-md-5" th:text="#{html.entity.wsp.name}" />
+										<th class="col-md-7" th:text="#{html.entity.wsp.entityId}" />
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="wsp : ${wsc.webServiceProviders}" class="d-flex">
+										<td class="col-md-5" th:text="${wsp.name}" />
+										<td class="col-md-7" th:text="${wsp.entityId}" />
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- /container -->
+
+	<nav th:replace="fragments/footer :: footer" />
+</body>
+</html>
