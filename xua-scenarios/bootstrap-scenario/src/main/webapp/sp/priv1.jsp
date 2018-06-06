@@ -6,10 +6,12 @@
 <%@page import="dk.itst.oiosaml.sp.UserAssertion"%>
 <%@page import="dk.itst.oiosaml.sp.UserAttribute"%>
 <%@page import="dk.itst.oiosaml.sp.service.util.Constants"%>
+<%@page import="client.saml.UserAuthorizationFetcher"%>
 
 	<% UserAssertion ua = UserAssertionHolder.get(); %>
 
     <jsp:include page="/head.jsp" />
+
     <div style="float: left">
     <h1>User NameID</h1>
     <%= ua.getSubject() %>
@@ -37,14 +39,20 @@
       Call Service
     </a>
     <br />
-
-
     </div>
+
 	<div style="float: right"><img src="<%= request.getContextPath() %>/oiosaml.gif" alt="oiosaml.java" /></div>
+
 	<div style="clear: both">&nbsp;</div>
+	
+	<h1>UserAuthorization:</h1>
+	<span style="font-size:80%; font-family:Monospace;">
+    <%= Utils.beautifyAndHtmlXML(UserAuthorizationFetcher.fetch(), "&nbsp;&nbsp;&nbsp;&nbsp;") %>
+	</span>
+
     <h1>Assertion:</h1><span style="font-size:80%; font-family:Monospace;">
     <%= Utils.beautifyAndHtmlXML(UserAssertionHolder.get().getXML(), "&nbsp;&nbsp;&nbsp;&nbsp;") %>
-  </span>
+  	</span>
   
   <br />
   <% if (!UserAssertionHolder.get().isAuthenticated()) { %>

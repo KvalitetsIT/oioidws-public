@@ -96,6 +96,12 @@ These configuration settings should be applied to a real Tomcat (or similar web-
 			<artifactId>cxf-rt-ws-security</artifactId>
 		</dependency>
 
+                <dependency>
+                        <groupId>dk.sds.xua</groupId>
+                        <artifactId>saml-h-util</artifactId>
+                        <version>1.0.0</version>
+                </dependency>
+
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

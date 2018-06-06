@@ -16,9 +16,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Element;
+
+import dk.sds.samlh.model.ClaimModel;
+import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
-import dk.sds.samlh.model.XmlObjectModel;
 import dk.sds.samlh.xsd.userauthorizations.ObjectFactory;
 import dk.sds.samlh.xsd.userauthorizations.UserAuthorizationListType;
 import dk.sds.samlh.xsd.userauthorizations.UserAuthorizationType;
@@ -27,8 +30,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserAuthorizationList extends XmlObjectModel {
-	public static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:UserAuthorizations";
+public class UserAuthorizationList implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:UserAuthorizations";
 	
 	private List<UserAuthorization> userAuthorizations = new ArrayList<>();
 		
@@ -56,6 +59,19 @@ public class UserAuthorizationList extends XmlObjectModel {
 		if (authorizationCodes.size() > authCodesSet.size()) {
 			throw new ValidationException("Non-unique AuthorizationCodes found [" + String.join(",", findDuplicates(authorizationCodes)) + "]");
 		}
+	}
+
+	public static UserAuthorizationList parse(Element element, Validate validate) throws ValidationException, JAXBException {
+		String str = null;
+
+		try {
+			str = ModelUtil.dom2String(element.getOwnerDocument());
+		}
+		catch (Exception ex) {
+			throw new ValidationException("Cannot parse Element", ex);
+		}
+
+		return parse(str, validate);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,7 +108,7 @@ public class UserAuthorizationList extends XmlObjectModel {
 		ObjectFactory objectFactory = new ObjectFactory();
 
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.FALSE);
 
 		UserAuthorizationListType authListType = objectFactory.createUserAuthorizationListType();
@@ -121,5 +137,15 @@ public class UserAuthorizationList extends XmlObjectModel {
 		}
 
 		return duplicates;
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.ELEMENT;
 	}
 }

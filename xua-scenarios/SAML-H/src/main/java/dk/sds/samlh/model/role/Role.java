@@ -10,9 +10,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Element;
+
+import dk.sds.samlh.model.ClaimModel;
+import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
-import dk.sds.samlh.model.XmlObjectModel;
 import dk.sds.samlh.xsd.role.ObjectFactory;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,8 +24,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Role extends XmlObjectModel {
-	public static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xacml:2.0:subject:role";
+public class Role implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xacml:2.0:subject:role";
 
 	private static ArrayList<String> allowedCodes = new ArrayList<String>();
 
@@ -72,6 +75,19 @@ public class Role extends XmlObjectModel {
 		}
 	}
 
+	public static Role parse(Element element, Validate validate) throws ValidationException, JAXBException {
+		String str = null;
+
+		try {
+			str = ModelUtil.dom2String(element.getOwnerDocument());
+		}
+		catch (Exception ex) {
+			throw new ValidationException("Cannot parse Element", ex);
+		}
+
+		return parse(str, validate);
+	}
+
 	public static Role parse(String object, Validate validate) throws JAXBException, ValidationException {
 		JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
 		Unmarshaller unmarsheller = context.createUnmarshaller();
@@ -114,5 +130,15 @@ public class Role extends XmlObjectModel {
 
 		jaxbMarshaller.marshal(object, writer);
 		return writer.toString();
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.ELEMENT;
 	}
 }

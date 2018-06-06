@@ -2,31 +2,10 @@
 
 include 'SubjectConfirmationDataWithType.php';
 
-/**
- * Example authentication source - username & password.
- *
- * This class is an example authentication source which stores all username/passwords in an array,
- * and authenticates users against this array.
- *
- * @author Olav Morken, UNINETT AS.
- * @package SimpleSAMLphp
- */
+// this is a modified version of the UserPass class found in SimpleSAMLPhp, to hook in our extra attributes
 class sspmod_exampleauth_Auth_Source_UserPass extends sspmod_core_Auth_UserPassBase {
-
-
-	/**
-	 * Our users, stored in an associative array. The key of the array is "<username>:<password>",
-	 * while the value of each element is a new array with the attributes for each user.
-	 */
 	private $users;
 
-
-	/**
-	 * Constructor for this authentication source.
-	 *
-	 * @param array $info  Information about this authentication source.
-	 * @param array $config  Configuration.
-	 */
 	public function __construct($info, $config) {
 		assert('is_array($info)');
 		assert('is_array($config)');
@@ -65,23 +44,10 @@ class sspmod_exampleauth_Auth_Source_UserPass extends sspmod_core_Auth_UserPassB
 		}
 	}
 
-
-	/**
-	 * Attempt to log in using the given username and password.
-	 *
-	 * On a successful login, this function should return the users attributes. On failure,
-	 * it should throw an exception. If the error was caused by the user entering the wrong
-	 * username or password, a SimpleSAML_Error_Error('WRONGUSERPASS') should be thrown.
-	 *
-	 * Note that both the username and the password are UTF-8 encoded.
-	 *
-	 * @param string $username  The username the user wrote.
-	 * @param string $password  The password the user wrote.
-	 * @return array  Associative array with the users attributes.
-	 */
 	protected function login($authStateId, $username, $password) {
 		assert('is_string($username)');
 		assert('is_string($password)');
+
 		SimpleSAML\Logger::info('User: ' . $username);
 
 		$userpass = $username . ':' . $password;
@@ -89,16 +55,13 @@ class sspmod_exampleauth_Auth_Source_UserPass extends sspmod_core_Auth_UserPassB
 			throw new SimpleSAML_Error_Error('WRONGUSERPASS');
 		}
 
-		/* From here code is modified by us */
-
 		/* Here we retrieve the state array we saved in the authenticate-function. */
 		SimpleSAML\Logger::info('StageID: '.self::STAGEID);
 		$state = SimpleSAML_Auth_State::loadState($authStateId, self::STAGEID);
-		SimpleSAML\Logger::info('Hello after');
-		//SimpleSAML\Logger::info('State:'.print_r($state,TRUE));
 
 		$state['saml:NameIDFormat'] = 'urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName';
 
+		// generate bootstrap token
 		$assertion = self::getBootstrapToken($username, $state);
 		$element = $assertion->toXML();
 		$xml = new DOMDocument();
@@ -106,30 +69,57 @@ class sspmod_exampleauth_Auth_Source_UserPass extends sspmod_core_Auth_UserPassB
 		$xml->formatOutput = false; 
 		$cloned = $element->cloneNode(TRUE);
 		$xml->appendChild($xml->importNode($cloned,TRUE));
-		/** @var mixed $xmlString */
 		$xmlString = $xml->saveXML();
-		SimpleSAML\Logger::info($xmlString);
 
-		/** @var mixed $attributes */
+		// generate UserAuthorizationList (DOMNodeList with DOMElement children is needed)
+		$tmpDoc = new DOMDocument();
+		$tmpDoc->loadXML(self::getUserAuthorizationExample());
+		$child = $tmpDoc->documentElement;
+		$tmpDoc2 = new DOMDocument();
+		$importedChild = $tmpDoc2->importNode($child, true);
+		$tmpElement = $tmpDoc2->createElementNS("urn:oasis:names:tc:SAML:2.0:assertion", "AttributeValue");
+
+		$tmpElement->appendChild($importedChild);
+		$nodelist = $tmpElement->childNodes;
+
 		$attributes = array(
 			'uid' => array($username),
 			'urn:liberty:disco:2006-08:DiscoveryEPR' => base64_encode($xmlString),
-			'dk:gov:saml:attribute:AssuranceLevel' => '3'
+			'dk:gov:saml:attribute:AssuranceLevel' => '3',
+			'dk:healthcare:saml:attribute:UserAuthorizations' => $nodelist
         	);
 
-		return SimpleSAML\Utils\Attributes::normalizeAttributesArray($attributes);
-		/* Some commented stuff */
-		/** $attributes = $this->users[$userpass];
-		$attributes['urn:liberty:disco:2006-08:DiscoveryEPR'] = base64_encode($xmlString);
-		$attributes = SimpleSAML\Utils\Attributes::normalizeAttributesArray($attributes);
-		return $attributes; */
+		return self::normalizeAttributesArray($attributes);
 	}
 
-	/** 
-		Method that builds custom assertion.
-		@author psu@digital-identity.dk
-	*/
-	private function getBootstrapToken($username,$state){
+	    private function normalizeAttributesArray($attributes)
+	    {
+		if (!is_array($attributes)) {
+		    throw new \InvalidArgumentException(
+		        'The attributes array is not an array, it is: '.print_r($attributes, true).'".'
+		    );
+		}
+
+		$newAttrs = array();
+		foreach ($attributes as $name => $values) {
+		    if (!is_string($name)) {
+		        throw new \InvalidArgumentException('Invalid attribute name: "'.print_r($name, true).'".');
+		    }
+
+		    $values = SimpleSAML\Utils\Arrays::arrayize($values);
+		    $newAttrs[$name] = $values;
+		}
+
+		return $newAttrs;
+	    }
+
+
+	private function getUserAuthorizationExample() {
+                return '<uap:UserAuthorizationList xmlns:uap="urn:dk:healthcare:saml:user_authorization_profile:1.0"><uap:UserAuthorization><uap:AuthorizationCode>341KY</uap:AuthorizationCode><uap:EducationCode>7170</uap:EducationCode><uap:EducationType>Læge</uap:EducationType></uap:UserAuthorization></uap:UserAuthorizationList>';
+	}
+
+
+	private function getBootstrapToken($username,$state) {
 		if (!array_key_exists('SPMetadata',$state)) {
 			throw new SimpleSAML_Error_Error('METADATANOTFOUND');
 		}
@@ -194,11 +184,11 @@ class sspmod_exampleauth_Auth_Source_UserPass extends sspmod_core_Auth_UserPassB
 		SimpleSAML\Logger::info('AfterDate: '.$notOnOrAfter->format('Y-m-d\TH:i:s.u\Z'));
 		$assertion->setNotOnOrAfter(SAML2\Utils::xsDateTimeToTimestamp($notOnOrAfter->format('Y-m-d\TH:i:s.u\Z'))); //add 1 hour
 		$assertion->setValidAudiences(['http://sts.sundhedsdatastyrelsen.dk/']);
-		
+
 		//Attributes
 		$attributes = array();
 		$attributesValueTypes = array();
-		
+
 		$assertion->setAttributeNameFormat('urn:oasis:names:tc:SAML:2.0:attrname-format:basic');
 
 		self::addAttributeToAssertion($attributes, $attributesValueTypes, 'dk:gov:saml:attribute:AssuranceLevel', '3', null);
@@ -209,35 +199,19 @@ class sspmod_exampleauth_Auth_Source_UserPass extends sspmod_core_Auth_UserPassB
    		//Sign
         	$idp = SimpleSAML_IdP::getByState($state);
         	$idpMetadata = $idp->getConfig();
-        
+
         	self::addSign($idpMetadata, $spMetadata, $assertion);
-		
+
 		return $assertion;
 	}
-	
-	/** 
-		Helper method. Because of the way attributes and attributeValueTypes are stored this method
-		is helpful managing code.
 
-		@author psu@digital-identity.dk
-	*/
 	private function addAttributeToAssertion(&$attributes, &$attributesValueTypes, $name, $value, $valueType){
 		$attributes[$name] = array();
 		$attributesValueTypes[$name] = array();
 		$attributes[$name][] = $value;
 		$attributesValueTypes[$name][] = $valueType;
-			
 	}
-	
-	/**
-	* Add signature key and sender certificate to an element (Message or Assertion).
-	*
-	* @param SimpleSAML_Configuration $srcMetadata The metadata of the sender.
-	* @param SimpleSAML_Configuration $dstMetadata The metadata of the recipient.
-	* @param \SAML2\SignedElement $element The element we should add the data to.
-	* 
-	* Moved here by psu@digital-identity.dk
-	*/
+
 	private function addSign(SimpleSAML_Configuration $srcMetadata, SimpleSAML_Configuration $dstMetadata, \SAML2\SignedElement $element) 
 	{
 		$dstPrivateKey = $dstMetadata->getString('signature.privatekey', null);

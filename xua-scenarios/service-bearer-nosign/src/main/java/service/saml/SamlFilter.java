@@ -21,6 +21,7 @@ public class SamlFilter implements Filter {
 		}
 		finally {
 			AssertionHolder.clear();
+			UserAuthorizationHolder.clear();
 		}
 	}
 

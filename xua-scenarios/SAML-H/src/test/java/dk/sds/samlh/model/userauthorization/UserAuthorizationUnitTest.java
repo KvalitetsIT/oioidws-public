@@ -24,7 +24,7 @@ public class UserAuthorizationUnitTest {
 				"    </uap:UserAuthorization>\n" + 
 				"    <uap:UserAuthorization>\n" + 
 				"        <uap:AuthorizationCode>7AD6T</uap:AuthorizationCode>\n" + 
-				"    	<uap:EducationCode>5433</uap:EducationCode>\n" + 
+				"        <uap:EducationCode>5433</uap:EducationCode>\n" + 
 				"        <uap:EducationType>Tandlæge</uap:EducationType>\n" + 
 				"    </uap:UserAuthorization>\n" + 
 				"</uap:UserAuthorizationList>";
@@ -52,7 +52,7 @@ public class UserAuthorizationUnitTest {
 				"    </uap:UserAuthorization>\n" + 
 				"    <uap:UserAuthorization>\n" + 
 				"        <uap:AuthorizationCode>7AD6T</uap:AuthorizationCode>\n" + 
-				"    	<uap:EducationCode>5433</uap:EducationCode>\n" + 
+				"        <uap:EducationCode>5433</uap:EducationCode>\n" + 
 				"        <uap:EducationType>Tandlæge</uap:EducationType>\n" + 
 				"    </uap:UserAuthorization>\n" + 
 				"</uap:UserAuthorizationList>";
@@ -77,7 +77,7 @@ public class UserAuthorizationUnitTest {
 				"    </uap:UserAuthorization>\n" + 
 				"    <uap:UserAuthorization>\n" + 
 				"        <uap:AuthorizationCode>7AD6T</uap:AuthorizationCode>\n" + 
-				"    	<uap:EducationCode>5433</uap:EducationCode>\n" + 
+				"        <uap:EducationCode>5433</uap:EducationCode>\n" + 
 				"        <uap:EducationType>Tandlæge</uap:EducationType>\n" + 
 				"    </uap:UserAuthorization>\n" + 
 				"</uap:UserAuthorizationList>";
@@ -94,7 +94,7 @@ public class UserAuthorizationUnitTest {
 				"    </uap:UserAuthorization>\n" + 
 				"    <uap:UserAuthorization>\n" + 
 				"        <uap:AuthorizationCode>AAAA1</uap:AuthorizationCode>\n" + 
-				"    	<uap:EducationCode>7170</uap:EducationCode>\n" + 
+				"        <uap:EducationCode>7170</uap:EducationCode>\n" + 
 				"        <uap:EducationType>Læge</uap:EducationType>\n" + 
 				"    </uap:UserAuthorization>\n" + 
 				"</uap:UserAuthorizationList>";

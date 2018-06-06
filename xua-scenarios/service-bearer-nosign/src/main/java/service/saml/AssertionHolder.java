@@ -1,15 +1,15 @@
 package service.saml;
 
-import service.bpp.PrivilegeListType;
+import dk.sds.samlh.model.oiobpp.PrivilegeList;
 
 public class AssertionHolder {
-	private static final ThreadLocal<PrivilegeListType> privileges = new ThreadLocal<>();
+	private static final ThreadLocal<PrivilegeList> privileges = new ThreadLocal<>();
 
-	public static void set(PrivilegeListType privilege) {
+	public static void set(PrivilegeList privilege) {
 		privileges.set(privilege);
 	}
 	
-	public static PrivilegeListType get() {
+	public static PrivilegeList get() {
 		return privileges.get();
 	}
 

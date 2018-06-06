@@ -9,9 +9,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Element;
+
+import dk.sds.samlh.model.ClaimModel;
+import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
-import dk.sds.samlh.model.XmlObjectModel;
 import dk.sds.samlh.xsd.provideridentifier.ObjectFactory;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ProviderIdentifier extends XmlObjectModel {
-	public static final String ATTRIBUTE_NAME = "urn:ihe:iti:xua:2017:subject:provider-identifier";
+public class ProviderIdentifier implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "urn:ihe:iti:xua:2017:subject:provider-identifier";
 
 	private String xsiType;
 	private String root;
@@ -39,6 +42,19 @@ public class ProviderIdentifier extends XmlObjectModel {
 		else if (this.extension == null) {
 			throw new ValidationException("Extension attribute is mandatory.");
 		}
+	}
+
+	public static ProviderIdentifier parse(Element element, Validate validate) throws ValidationException, JAXBException {
+		String str = null;
+
+		try {
+			str = ModelUtil.dom2String(element.getOwnerDocument());
+		}
+		catch (Exception ex) {
+			throw new ValidationException("Cannot parse Element", ex);
+		}
+
+		return parse(str, validate);
 	}
 
 	public static ProviderIdentifier parse(String object, Validate validate) throws JAXBException, ValidationException {
@@ -83,5 +99,15 @@ public class ProviderIdentifier extends XmlObjectModel {
 
 		jaxbMarshaller.marshal(object, writer);
 		return writer.toString();
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.ELEMENT;
 	}
 }

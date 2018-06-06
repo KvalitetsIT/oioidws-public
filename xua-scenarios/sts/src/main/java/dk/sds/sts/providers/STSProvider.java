@@ -18,7 +18,7 @@ import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.validator.SAMLTokenValidator;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.opensaml.core.config.InitializationException;
-import org.opensaml.saml.config.XMLObjectProviderInitializer;
+import org.opensaml.core.config.InitializationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -79,9 +79,8 @@ public class STSProvider extends SecurityTokenServiceProvider {
 		issueOperation.getClaimsManager().setClaimParsers(Collections.singletonList(new AuthClaimsParser()));
 		
 		this.setIssueOperation(issueOperation);
-		
-		
-		// initialize OpenSAML XMLObjectProvider, otherwise our AttributeStatementProvider cannot create complex claims
-		new XMLObjectProviderInitializer().init();
+
+		// initialize OpenSAML XMLObjectProvider
+		InitializationService.initialize();
 	}
 }

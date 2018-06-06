@@ -53,6 +53,106 @@ public class PrivilegeListUnitTest {
 	}
 	
 	@Test
+	public void testParsePharmacist() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:healthcare:saml:RegisteredPharmacistCPR:0101011118\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getScopeValue().equals("0101011118"));
+	}
+	
+	@Test
+	public void testParseCprIdentifier() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:gov:saml:cprNumberIdentifier:0101011118\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getScopeValue().equals("0101011118"));
+	}
+	
+	@Test
+	public void testParseCvrIdentifier() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:gov:saml:cvrNumberIdentifier:12345678\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getScopeValue().equals("12345678"));
+	}
+	
+	@Test
+	public void testParseSeIdentifier() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:gov:saml:seNumberIdentifier:12345678\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getScopeValue().equals("12345678"));
+	}
+	
+	@Test
+	public void testParsePNumberIdentifier() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:gov:saml:productionUnitIdentifier:1234567890\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getScopeValue().equals("1234567890"));
+	}
+	
+	@Test
 	public void testParseAndGenerateMethod() throws JAXBException, ValidationException {
 		String xmlString =
 				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 

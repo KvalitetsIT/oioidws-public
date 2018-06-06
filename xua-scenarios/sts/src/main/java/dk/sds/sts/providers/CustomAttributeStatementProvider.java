@@ -26,6 +26,7 @@ import dk.sds.samlh.model.childrenincustody.ChildrenInCustody;
 import dk.sds.samlh.model.childrenincustody.ChildrenInCustody.CprType;
 import dk.sds.samlh.model.oiobpp.PrivilegeGroup;
 import dk.sds.samlh.model.oiobpp.PrivilegeList;
+import dk.sds.samlh.model.oiobpp.PrivilegeList.PriviligeType;
 import dk.sds.samlh.model.onbehalfof.OnBehalfOf;
 import dk.sds.samlh.model.onbehalfof.OnBehalfOf.Legislation;
 import dk.sds.samlh.model.provideridentifier.ProviderIdentifier;
@@ -86,7 +87,7 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 					.value("1101116171")
 					.build();
 
-			attributeList.add(getAttribute(ChildrenInCustody.ATTRIBUTE_NAME, BASIC_FORMAT, childrenInCustody.generate(Validate.YES)));
+			attributeList.add(getAttribute(childrenInCustody.getAttributeName(), BASIC_FORMAT, childrenInCustody.generate(Validate.YES)));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate childrenInCustody claim!", ex);
@@ -98,10 +99,11 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 			oiobpp.getPrivilegeGroups().add(PrivilegeGroup.builder()
 					.scopeAuthorizationCode("341KY")
 					.scopeEducationCode("7170")
+					.priviligeType(PriviligeType.UserAuthorization)
 					.privileges(Collections.singletonList("http://some.role.dk"))
 					.build());
 
-			attributeList.add(getAttribute(PrivilegeList.ATTRIBUTE_NAME, BASIC_FORMAT, oiobpp.generate(Validate.YES)));
+			attributeList.add(getAttribute(oiobpp.getAttributeName(), BASIC_FORMAT, oiobpp.generate(Validate.YES)));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate PrivilegeList claim!", ex);
@@ -114,7 +116,7 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 					.legislation(Legislation.actThroughCustodyOver)
 					.build();
 
-			attributeList.add(getAttribute(OnBehalfOf.ATTRIBUTE_NAME, BASIC_FORMAT, onBehalfOf.generate(Validate.YES)));
+			attributeList.add(getAttribute(onBehalfOf.getAttributeName(), BASIC_FORMAT, onBehalfOf.generate(Validate.YES)));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate OnBehalfOf claim!", ex);
@@ -137,7 +139,7 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 			XSAny attributeValue = builder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
 			attributeValue.getUnknownXMLObjects().add(claim);
 
-			attributeList.add(getAttribute(ProviderIdentifier.ATTRIBUTE_NAME, BASIC_FORMAT, attributeValue));
+			attributeList.add(getAttribute(providerIdentifier.getAttributeName(), BASIC_FORMAT, attributeValue));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate ProviderIdentifier claim!", ex);
@@ -158,7 +160,7 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 			XSAny attributeValue = builder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
 			attributeValue.getUnknownXMLObjects().add(claim);
 
-			attributeList.add(getAttribute(PurposeOfUse.ATTRIBUTE_NAME, BASIC_FORMAT, attributeValue));
+			attributeList.add(getAttribute(purposeOfUse.getAttributeName(), BASIC_FORMAT, attributeValue));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate PurposeOfUse claim!", ex);
@@ -181,7 +183,7 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 			XSAny attributeValue = builder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
 			attributeValue.getUnknownXMLObjects().add(claim);
 
-			attributeList.add(getAttribute(Role.ATTRIBUTE_NAME, BASIC_FORMAT, attributeValue));
+			attributeList.add(getAttribute(role.getAttributeName(), BASIC_FORMAT, attributeValue));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate Role claim!", ex);
@@ -203,7 +205,7 @@ public class CustomAttributeStatementProvider implements AttributeStatementProvi
 			XSAny attributeValue = builder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
 			attributeValue.getUnknownXMLObjects().add(claim);
 
-			attributeList.add(getAttribute(UserAuthorizationList.ATTRIBUTE_NAME, BASIC_FORMAT, attributeValue));
+			attributeList.add(getAttribute(auth.getAttributeName(), BASIC_FORMAT, attributeValue));
 		}
 		catch (Exception ex) {
 			throw new RuntimeException("Failed to generate UserAuthorization claim!", ex);

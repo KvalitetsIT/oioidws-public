@@ -6,10 +6,11 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.ws.security.trust.claims.ClaimsCallback;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import dk.sds.samlh.model.Validate;
+import dk.sds.samlh.model.resourceid.ResourceId;
 
 public class ClaimsCallbackHandler implements CallbackHandler {
 
@@ -27,19 +28,17 @@ public class ClaimsCallbackHandler implements CallbackHandler {
 	}
 
 	private static Element createClaims() {
-		Document doc = DOMUtils.createDocument();
-		Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "wst:Claims");
-		claimsElement.setAttributeNS(null, "Dialect", "http://docs.oasis-open.org/wsfed/authorization/200706/authclaims");
+		ResourceId resourceIdClaim = ResourceId.builder()
+				.oid("1.2.208.176.1.2")
+				.patientId("2512484916")
+				.build();
 
-		Element claimType = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "auth:ClaimType");
-		claimType.setAttributeNS(null, "Uri", "urn:oasis:names:tc:xacml:2.0:resource:resource-id");
-		claimsElement.appendChild(claimType);
+		try {
+			return resourceIdClaim.generateClaim(Validate.YES);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-		Element claimValue = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "auth:Value");
-		claimValue.setTextContent("2512484916^^^&1.2.208.176.1.2&ISO");
-		claimType.appendChild(claimValue);
-
-		return claimsElement;
+		return null;
 	}
-
 }

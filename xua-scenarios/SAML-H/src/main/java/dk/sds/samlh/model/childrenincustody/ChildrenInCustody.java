@@ -1,5 +1,6 @@
 package dk.sds.samlh.model.childrenincustody;
 
+import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
 import lombok.Builder;
@@ -9,8 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ChildrenInCustody {
-	public static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:ChildrenInCustody";
+public class ChildrenInCustody implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:ChildrenInCustody";
 
 	public enum CprType {
 		CPR("urn:dk:gov:saml:cprNumberIdentifier"), ECPR("urn:dk:healthcare:saml:attribute:ECprNumberIdentifier");
@@ -117,5 +118,15 @@ public class ChildrenInCustody {
 		}
 
 		return cprType.getValue() + ':' + value;
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.TEXT;
 	}
 }

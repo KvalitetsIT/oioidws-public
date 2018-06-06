@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
+import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
 import lombok.Builder;
@@ -14,8 +15,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class OnBehalfOf {
-	public static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:OnBehalfOf";
+public class OnBehalfOf implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:OnBehalfOf";
 	
 	private static final String userAuthorizationPattern = "urn:dk:healthcare:saml:(.+):userAuthorization:AuthorizationCode:(.+):EducationCode:(.+)";
 	private static final String cprPattern = "urn:dk:healthcare:saml:(.+):cprNumberIdentifier:(.+)";
@@ -165,5 +166,15 @@ public class OnBehalfOf {
 		}
 
 		return result;
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.TEXT;
 	}
 }

@@ -9,9 +9,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Element;
+
+import dk.sds.samlh.model.ClaimModel;
+import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
-import dk.sds.samlh.model.XmlObjectModel;
 import dk.sds.samlh.xsd.purposeofuse.ObjectFactory;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class PurposeOfUse extends XmlObjectModel {
-	public static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xspa:1.0:subject:purposeofuse";
+public class PurposeOfUse implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xspa:1.0:subject:purposeofuse";
 	
 	private Code code;
 	private String codeSystem;
@@ -43,6 +46,19 @@ public class PurposeOfUse extends XmlObjectModel {
 		else if (this.codeSystem == null) {
 			throw new ValidationException("CodeSystem attribute is mandatory.");
 		}
+	}
+	
+	public static PurposeOfUse parse(Element element, Validate validate) throws ValidationException, JAXBException {
+		String str = null;
+
+		try {
+			str = ModelUtil.dom2String(element.getOwnerDocument());
+		}
+		catch (Exception ex) {
+			throw new ValidationException("Cannot parse Element", ex);
+		}
+
+		return parse(str, validate);
 	}
 
 	public static PurposeOfUse parse(String object, Validate validate) throws JAXBException, ValidationException {
@@ -87,5 +103,15 @@ public class PurposeOfUse extends XmlObjectModel {
 
 		jaxbMarshaller.marshal(object, writer);
 		return writer.toString();
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.ELEMENT;
 	}
 }

@@ -137,11 +137,6 @@
 					<sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
 					<sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
 				</sp:SignedParts>
-				
-				<!-- note this is a special setting used in this scenario only - the STS accepts both encrypted and unencrypted payloads -->
-				<sp:EncryptedParts xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
-					<sp:Body />
-				</sp:EncryptedParts>
 			</wsp:All>
 		</wsp:ExactlyOne>
 	</wsp:Policy>
@@ -159,11 +154,6 @@
 					<sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
 					<sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
 				</sp:SignedParts>
-				
-				<!-- note this is a special setting used in this scenario only - the STS accepts both encrypted and unencrypted payloads -->
-				<sp:EncryptedParts xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
-					<sp:Body />
-				</sp:EncryptedParts>
 			</wsp:All>
 		</wsp:ExactlyOne>
 	</wsp:Policy>

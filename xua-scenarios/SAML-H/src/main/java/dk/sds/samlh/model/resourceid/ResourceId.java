@@ -1,5 +1,6 @@
 package dk.sds.samlh.model.resourceid;
 
+import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
 import lombok.Builder;
@@ -9,8 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ResourceId {
-	public static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xacml:2.0:resource:resource-id";
+public class ResourceId implements ClaimModel {
+	private static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xacml:2.0:resource:resource-id";
 
 	private String patientId;
 	private String oid;
@@ -50,5 +51,15 @@ public class ResourceId {
 		}
 
 		return patientId + "^^^&" + oid + "&ISO";
+	}
+
+	@Override
+	public String getAttributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
+	@Override
+	public ClaimType getClaimType() {
+		return ClaimType.TEXT;
 	}
 }
