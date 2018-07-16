@@ -94,7 +94,7 @@
 	<modules>
 		<module>lbsb-scenarios</module>
 		<module>oioidws-scenarios</module>
-		<module>xua-scenarios</module>
+		<module>oioidws-xua-scenarios</module>
 	</modules>
 
 	<dependencyManagement>
