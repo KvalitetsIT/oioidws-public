@@ -26,7 +26,7 @@
 		<jaxws:properties>
 			<entry key="ws-security.callback-handler" value="service.callback.KeystorePasswordCallback" />
 			<entry key="ws-security.signature.properties" value="serviceKeystore.properties" />
-			<entry key="ws-security.saml2.validator" value="service.saml.DigstSamlAssertionValidator" />
+			<entry key="ws-security.saml2.validator" value="service.saml.XuaSamlAssertionValidator" />
 			<entry key="ws-security.timestamp.timeToLive" value="300" />
 
 			<!--  the token issued by the STS is not BSP compliant -->

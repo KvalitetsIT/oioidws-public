@@ -114,7 +114,7 @@
 
 						<sp:AlgorithmSuite>
 							<wsp:Policy>
-								<sp:Basic256 />
+								<sp:Basic256Sha256 />
 							</wsp:Policy>
 						</sp:AlgorithmSuite>
 

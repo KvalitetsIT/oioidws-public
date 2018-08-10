@@ -1,11 +1,17 @@
 package client.sts;
 
+import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.trust.STSClient;
+import org.w3c.dom.Element;
+
+import dk.itst.oiosaml.sp.UserAssertion;
+import dk.itst.oiosaml.sp.UserAssertionHolder;
+import dk.itst.oiosaml.sp.UserAttribute;
 
 public class XUASTSClient extends STSClient {
 
@@ -26,5 +32,17 @@ public class XUASTSClient extends STSClient {
 
 		writer.writeEndElement();
 		writer.writeEndElement();
-	}	
+	}
+	
+	@Override
+	public Element getActAsToken() throws Exception {
+		// grab the IdP supplied token from the UserAssertionHolder and copy the relevant attribute into the ActAs field in the STS request
+		UserAssertion userAssertion = UserAssertionHolder.get();
+		UserAttribute attribute = userAssertion.getAttribute("urn:liberty:disco:2006-08:DiscoveryEPR");
+		byte[] rawAssertion = Base64.getDecoder().decode(attribute.getValue());
+
+		String actAsToken = new String(rawAssertion, Charset.forName("UTF-8"));
+
+		return getDelegationSecurityToken(actAsToken);
+	}
 }

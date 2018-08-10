@@ -17,7 +17,7 @@ import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.oiobpp.PrivilegeList;
 import dk.sds.samlh.model.resourceid.ResourceId;
 
-public class DigstSamlAssertionValidator extends SamlAssertionValidator {
+public class XuaSamlAssertionValidator extends SamlAssertionValidator {
 	// Hard-coded expected audience in token. Multiple values can be added if needed
 	private List<String> audienceRestrictions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;

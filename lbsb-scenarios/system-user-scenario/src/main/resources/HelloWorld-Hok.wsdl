@@ -28,6 +28,14 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+
+                        <xsd:element name="MissingName">
+                                <xsd:complexType>
+                                        <xsd:sequence>
+                                                <xsd:element name="response" type="xsd:string" />
+                                        </xsd:sequence>
+                                </xsd:complexType>
+                        </xsd:element>
 		</xsd:schema>
 	</wsdl:types>
 
@@ -37,11 +45,15 @@
 	<wsdl:message name="HelloWorldResponse">
 		<wsdl:part element="hw:HelloWorldResponse" name="parameters" />
 	</wsdl:message>
+	<wsdl:message name="MissingName">
+		<wsdl:part name="fault" element="hw:MissingName" /> 
+	</wsdl:message>
 
 	<wsdl:portType name="HelloWorldPortType">
 		<wsdl:operation name="HelloWorld">
 			<wsdl:input message="tns:HelloWorldRequest" />
 			<wsdl:output message="tns:HelloWorldResponse" />
+			<wsdl:fault message="tns:MissingName" name="MissingName" /> 
 		</wsdl:operation>
 	</wsdl:portType>
 
@@ -58,6 +70,10 @@
 				<soap:body use="literal" />
 				<wsp:PolicyReference URI="#HelloWorldBinding_HelloWorld_Output_Policy" />
 			</wsdl:output>
+			<wsdl:fault name="MissingName">
+				<soap:fault name="MissingName" use="literal" /> 
+                                <wsp:PolicyReference URI="#HelloWorldBinding_HelloWorld_Output_Policy" />
+			</wsdl:fault>
 		</wsdl:operation>
 	</wsdl:binding>
 
@@ -98,7 +114,7 @@
 
 						<sp:AlgorithmSuite>
 							<wsp:Policy>
-								<sp:Basic256 />
+								<sp:Basic256Sha256 />
 							</wsp:Policy>
 						</sp:AlgorithmSuite>
 

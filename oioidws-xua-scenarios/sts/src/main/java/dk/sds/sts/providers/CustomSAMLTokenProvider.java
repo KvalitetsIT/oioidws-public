@@ -2,7 +2,6 @@ package dk.sds.sts.providers;
 
 import java.util.List;
 
-import org.apache.cxf.sts.service.EncryptionProperties;
 import org.apache.cxf.sts.token.provider.DefaultSubjectProvider;
 import org.apache.cxf.sts.token.provider.SAMLTokenProvider;
 import org.apache.cxf.sts.token.provider.TokenProviderParameters;
@@ -17,11 +16,9 @@ import dk.sds.sts.dao.model.WebServiceProvider;
 public class CustomSAMLTokenProvider extends SAMLTokenProvider {
 	private static final Logger logger = Logger.getLogger(CustomSAMLTokenProvider.class);
 	private WebServiceConsumerDao wscDao;
-	private boolean encryptionEnabled;
 
-	public CustomSAMLTokenProvider(WebServiceConsumerDao wscDao, String entityId, boolean encryptionEnabled) {
+	public CustomSAMLTokenProvider(WebServiceConsumerDao wscDao, String entityId) {
 		this.wscDao = wscDao;
-		this.encryptionEnabled = encryptionEnabled;
 		
 		((DefaultSubjectProvider) this.getSubjectProvider()).setSubjectNameQualifier(entityId);
 		
@@ -45,10 +42,8 @@ public class CustomSAMLTokenProvider extends SAMLTokenProvider {
 		boolean isAllowed = false;
 		List<WebServiceProvider> wsps = client.getWebServiceProviders();
 		
-		WebServiceProvider provider = null;
 		for (WebServiceProvider wsp : wsps) {
 			if (wsp.getEntityId().equals(audience)) {
-				provider = wsp;
 				isAllowed = true;
 			}
 		}
@@ -58,19 +53,6 @@ public class CustomSAMLTokenProvider extends SAMLTokenProvider {
 
 			logger.error(error);
             throw new STSException(error, STSException.REQUEST_FAILED);
-		}
-
-		if (encryptionEnabled) {			
-			try {
-				tokenParameters.setEncryptToken(true);
-				EncryptionProperties encryptionProperties = new EncryptionProperties();
-				encryptionProperties.setEncryptionName(provider.getSubject());
-				tokenParameters.setEncryptionProperties(encryptionProperties);
-				tokenParameters.getStsProperties().setEncryptionCrypto(new CustomMerlin(null, this.getClass().getClassLoader(), null));
-			}
-			catch (Exception ex) {
-				throw new STSException("Failed to create a token", ex);
-			}
 		}
 
 		return super.createToken(tokenParameters);

@@ -6,6 +6,9 @@ import java.util.Base64;
 import org.apache.cxf.Bus;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.trust.STSClient;
+import org.w3c.dom.Element;
+
+import backend.security.TokenHolder;
 
 public class XUASTSClient extends STSClient {
 
@@ -24,4 +27,9 @@ public class XUASTSClient extends STSClient {
 		writer.writeEndElement();
 		writer.writeEndElement();
 	}	
+
+	@Override
+	public Element getActAsToken() throws Exception {
+		return getDelegationSecurityToken(TokenHolder.getToken());
+	}
 }

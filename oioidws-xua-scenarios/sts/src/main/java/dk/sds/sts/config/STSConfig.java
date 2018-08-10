@@ -40,15 +40,12 @@ public class STSConfig {
 	@Value("${sts.testheader}")
 	private boolean testHeaderEnabled;
 	
-	@Value("${sts.encrypttokens}")
-	private boolean encryptTokens;
-
 	@Bean
 	public SAMLTokenProvider samlTokenProvider(AttributeStatementProvider provider, WebServiceConsumerDao wscDao) {
 		ArrayList<AttributeStatementProvider> attributeStatementProviders = new ArrayList<>();
 		attributeStatementProviders.add(provider);
 		
-		SAMLTokenProvider samlTokenProvider = new CustomSAMLTokenProvider(wscDao, entityId, encryptTokens);
+		SAMLTokenProvider samlTokenProvider = new CustomSAMLTokenProvider(wscDao, entityId);
 		samlTokenProvider.setAttributeStatementProviders(attributeStatementProviders);
 		((DefaultConditionsProvider) samlTokenProvider.getConditionsProvider()).setLifetime(timeToLive);
 
