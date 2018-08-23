@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceProvider;
 
 import org.apache.cxf.annotations.EndpointProperties;
@@ -35,6 +36,7 @@ import dk.sds.sts.dao.WebServiceProviderDao;
    @EndpointProperty(key = "ws-security.callback-handler", value = "dk.sds.sts.callback.PasswordCallbackHandler"),
    @EndpointProperty(key = "ws-security.asymmetric.signature.algorithm", value = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
 })
+@BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
 @Component
 public class STSProvider extends SecurityTokenServiceProvider {
 
