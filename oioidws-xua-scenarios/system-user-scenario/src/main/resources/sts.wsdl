@@ -2,7 +2,7 @@
 <wsdl:definitions targetNamespace="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
 				  xmlns:tns="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
 				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-				  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+				  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
 				  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
 				  xmlns:wsp="http://www.w3.org/ns/ws-policy"
 				  xmlns:wst="http://docs.oasis-open.org/ws-sx/ws-trust/200512"
