@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ImportResource;
 public class Application {
 	
 	public static void main(String[] args) {
+		System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+
 		SpringApplication.run(Application.class, args);
 	}
 }

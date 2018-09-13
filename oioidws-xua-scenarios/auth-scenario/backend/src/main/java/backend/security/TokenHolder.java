@@ -1,13 +1,13 @@
 package backend.security;
 
 public class TokenHolder {
-	private static final ThreadLocal<String> tokenHolder = new ThreadLocal<>();
+	private static final ThreadLocal<Object> tokenHolder = new ThreadLocal<>();
 	
-	public static void setToken(String token) {
+	public static void setToken(Object token) {
 		tokenHolder.set(token);
 	}
 	
-	public static String getToken() {
+	public static Object getToken() {
 		return tokenHolder.get();
 	}
 }
