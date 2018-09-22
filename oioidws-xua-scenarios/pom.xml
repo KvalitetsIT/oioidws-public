@@ -9,6 +9,11 @@
 	<packaging>pom</packaging>
 	<name>XUA Parent</name>
 
+        <properties>
+                <cxf.version>3.2.6</cxf.version>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        </properties>
+
 	<modules>
 		<module>SAML-H</module>
 		<module>service-hok</module>

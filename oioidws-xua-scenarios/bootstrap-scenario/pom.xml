@@ -9,6 +9,12 @@
 	<artifactId>cxf-wsc-xua-bootstrap</artifactId>
 	<name>CXF WS Consumer for Bootstrap Scenario (xua)</name>
 
+        <properties>
+		<!-- we have to stay at 3.0.16 until OIOSAML supports OpenSAML 3.3.0, otherwise we have conflicts -->
+                <cxf.version>3.0.16</cxf.version>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        </properties>
+
 	<build>
 		<plugins>
 			<plugin>

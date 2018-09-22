@@ -1,10 +1,10 @@
 package service.saml;
 
-import org.opensaml.Configuration;
-import org.opensaml.saml2.core.Attribute;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.io.Marshaller;
-import org.opensaml.xml.io.MarshallerFactory;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallerFactory;
 import org.w3c.dom.Element;
 
 import dk.sds.samlh.model.Validate;
@@ -23,7 +23,7 @@ public class UserAuthorizationHolder {
 		if (attribute != null) {
 			try {
 				XMLObject attributeValue = attribute.getAttributeValues().get(0).getOrderedChildren().get(0);
-				MarshallerFactory marshallerFactory = Configuration.getMarshallerFactory();
+				MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
 				Marshaller marshaller = marshallerFactory.getMarshaller(attribute);
 				
 				Element element = marshaller.marshall(attributeValue);

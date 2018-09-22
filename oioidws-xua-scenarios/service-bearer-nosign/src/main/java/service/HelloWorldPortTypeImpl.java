@@ -24,6 +24,10 @@ import service.saml.UserAuthorizationHolder;
 @BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
 public class HelloWorldPortTypeImpl implements HelloWorldPortType {
 
+	static {
+		System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+	}
+
 	@Override
 	public String helloWorld(String name) {
 		UserAuthorizationList auth = UserAuthorizationHolder.get();

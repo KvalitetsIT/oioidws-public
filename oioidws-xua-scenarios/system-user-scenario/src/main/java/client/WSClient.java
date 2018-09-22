@@ -14,7 +14,9 @@ import dk.sds.samlh.model.resourceid.ResourceId;
 
 public class WSClient {
     public static void main (String[] args) {
-    	setSSLTrust();
+        System.setProperty("javax.net.ssl.trustStore", "src/main/resources/ssl-trust.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "Test1234");
+		System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
     	// perform two calls in the context of one specific patient
     	// 1st call will fetch a token
@@ -33,14 +35,6 @@ public class WSClient {
     	setPatientContext("2512484916");
     	System.out.println(hello("Jimmy"));
     }
-
-	// This is a hack to support the self-signed SSL certificate used on the WSP
-	// in a real production setting, the service would be protected by a trusted SSL certificate
-	// and setting a custom truststore like this would not be needed
-    private static void setSSLTrust() {
-        System.setProperty("javax.net.ssl.trustStore", "src/main/resources/ssl-trust.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "Test1234");
-	}
 
 	public static String hello(String name) {
 		// create a new instance of the Service/Port classes for each call,

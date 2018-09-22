@@ -1,8 +1,8 @@
 package backend.controller;
 
 import java.nio.charset.Charset;
-import java.util.Base64;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.example.contract.helloworld.HelloWorldPortType;
 import org.example.contract.helloworld.HelloWorldService;
@@ -30,7 +30,7 @@ public class HelloController {
 		HelloWorldService service = new HelloWorldService();
 		HelloWorldPortType port = service.getHelloWorldPort();
 
-		TokenHolder.setToken(new String(Base64.getDecoder().decode(request.getToken()), Charset.forName("UTF-8")));
+		TokenHolder.setToken(new String(Base64.decodeBase64(request.getToken()), Charset.forName("UTF-8")));
 
 		// perform a call to the STS to exchange the self-signed token into a "bootstrap"-token
 		SecurityToken securityToken = stsClient.requestSecurityToken("http://localhost:8080/service/hello");

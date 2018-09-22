@@ -4,9 +4,9 @@ import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
 import org.opensaml.DefaultBootstrap;
@@ -115,7 +115,7 @@ public class TokenBuilder {
 			Credential signingCredential = SecurityHelper.getSimpleCredential(certificate, privateKey);
 			
 	        org.opensaml.xml.signature.X509Certificate cert = new X509CertificateBuilder().buildObject();
-	        cert.setValue(Base64.getEncoder().encodeToString(certificate.getEncoded()));
+	        cert.setValue(Base64.encodeBase64String(certificate.getEncoded()));
 	        X509Data x509Data = new X509DataBuilder().buildObject();
 			x509Data.getX509Certificates().add(cert);
 
@@ -147,7 +147,7 @@ public class TokenBuilder {
 	
 			Element plaintextElement = marshaller.marshall(assertion);
 	        String assertionString = XMLHelper.nodeToString(plaintextElement);
-	        return Base64.getEncoder().encodeToString(assertionString.getBytes(Charset.forName("UTF-8")));
+	        return Base64.encodeBase64String(assertionString.getBytes(Charset.forName("UTF-8")));
 		}
 		catch (Exception ex) {
 			ui.writeLog("Failed to generate self-signed token", ex);

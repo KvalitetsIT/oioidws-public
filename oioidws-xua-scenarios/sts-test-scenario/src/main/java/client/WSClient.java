@@ -20,7 +20,8 @@ public class WSClient {
     	// and setting a custom truststore like this would not be needed
         System.setProperty("javax.net.ssl.trustStore", "src/main/resources/ssl-trust.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "Test1234");
-
+		System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+		
         try {
         	System.out.println("*** Running SERVER_ERROR testcase");
         	
