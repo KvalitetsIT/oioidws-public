@@ -9,21 +9,14 @@ import javax.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Element;
 
+import dk.sds.samlh.model.AttributeNameConstants;
 import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
 import dk.sds.samlh.xsd.provideridentifier.ObjectFactory;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
 public class ProviderIdentifier implements ClaimModel {
-	private static final String ATTRIBUTE_NAME = "urn:ihe:iti:xua:2017:subject:provider-identifier";
-
 	private String xsiType;
 	private String root;
 	private String extension;
@@ -31,13 +24,13 @@ public class ProviderIdentifier implements ClaimModel {
 	private Boolean displayable;
 
 	public void validate() throws ValidationException {
-		if (this.xsiType == null || !this.xsiType.equals("II")) {
+		if (this.getXsiType() == null || !this.getXsiType().equals("II")) {
 			throw new ValidationException("Type must be set to II.");
 		}
-		else if (this.root == null) {
+		else if (this.getRoot() == null) {
 			throw new ValidationException("Root attribute is mandatory.");
 		}
-		else if (this.extension == null) {
+		else if (this.getExtension() == null) {
 			throw new ValidationException("Extension attribute is mandatory.");
 		}
 	}
@@ -60,13 +53,12 @@ public class ProviderIdentifier implements ClaimModel {
 		Unmarshaller unmarsheller = context.createUnmarshaller();
 		dk.sds.samlh.xsd.provideridentifier.ProviderIdentifier piType = (dk.sds.samlh.xsd.provideridentifier.ProviderIdentifier) unmarsheller.unmarshal(ModelUtil.getSecureSource(object));
 
-		ProviderIdentifier result = ProviderIdentifier.builder()
-			.root(piType.getRoot())
-			.extension(piType.getExtension())
-			.assigningAuthorityName(piType.getAssigningAuthorityName())
-			.displayable(piType.getDisplayable())
-			.xsiType(piType.getXsiType())
-			.build();
+		ProviderIdentifier result = new ProviderIdentifier();
+		result.root = piType.getRoot();
+		result.extension = piType.getExtension();
+		result.assigningAuthorityName = piType.getAssigningAuthorityName();
+		result.displayable = piType.getDisplayable();
+		result.xsiType = piType.getXsiType();
 
 		if (validate.equals(Validate.YES)) {
 			result.validate();
@@ -89,11 +81,11 @@ public class ProviderIdentifier implements ClaimModel {
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
 		dk.sds.samlh.xsd.provideridentifier.ProviderIdentifier object = objectFactory.createProviderIdentifier();
-		object.setRoot(this.root);
-		object.setExtension(this.extension);
-		object.setAssigningAuthorityName(this.assigningAuthorityName);
-		object.setDisplayable(this.displayable);
-		object.setXsiType(this.xsiType);
+		object.setRoot(this.getRoot());
+		object.setExtension(this.getExtension());
+		object.setAssigningAuthorityName(this.getAssigningAuthorityName());
+		object.setDisplayable(this.getDisplayable());
+		object.setXsiType(this.getXsiType());
 
 		jaxbMarshaller.marshal(object, writer);
 		return writer.toString();
@@ -101,11 +93,51 @@ public class ProviderIdentifier implements ClaimModel {
 
 	@Override
 	public String getAttributeName() {
-		return ATTRIBUTE_NAME;
+		return AttributeNameConstants.PROVIDER_IDENTIFIER;
 	}
 
 	@Override
 	public ClaimType getClaimType() {
 		return ClaimType.ELEMENT;
+	}
+
+	public String getXsiType() {
+		return xsiType;
+	}
+
+	public void setXsiType(String xsiType) {
+		this.xsiType = xsiType;
+	}
+
+	public String getRoot() {
+		return root;
+	}
+
+	public void setRoot(String root) {
+		this.root = root;
+	}
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+
+	public String getAssigningAuthorityName() {
+		return assigningAuthorityName;
+	}
+
+	public void setAssigningAuthorityName(String assigningAuthorityName) {
+		this.assigningAuthorityName = assigningAuthorityName;
+	}
+
+	public Boolean getDisplayable() {
+		return displayable;
+	}
+
+	public void setDisplayable(Boolean displayable) {
+		this.displayable = displayable;
 	}
 }

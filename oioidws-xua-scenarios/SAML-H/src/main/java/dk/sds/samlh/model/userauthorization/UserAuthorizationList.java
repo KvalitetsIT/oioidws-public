@@ -16,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Element;
 
+import dk.sds.samlh.model.AttributeNameConstants;
 import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
@@ -23,20 +24,14 @@ import dk.sds.samlh.model.ValidationException;
 import dk.sds.samlh.xsd.userauthorizations.ObjectFactory;
 import dk.sds.samlh.xsd.userauthorizations.UserAuthorizationListType;
 import dk.sds.samlh.xsd.userauthorizations.UserAuthorizationType;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class UserAuthorizationList implements ClaimModel {
-	private static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:UserAuthorizations";
-	
+public class UserAuthorizationList implements ClaimModel {	
 	private List<UserAuthorization> userAuthorizations = new ArrayList<>();
 		
 	public void validate() throws ValidationException {
 		ArrayList<String> authorizationCodes = new ArrayList<>();
 
-		for (UserAuthorization userAuth : userAuthorizations) {
+		for (UserAuthorization userAuth : getUserAuthorizations()) {
 			String authorizationCode = userAuth.getAuthorizationCode();
 			String eduCode = userAuth.getEducationCode();
 			String eduType = userAuth.getEducationType();
@@ -80,13 +75,12 @@ public class UserAuthorizationList implements ClaimModel {
 
 		UserAuthorizationList result = new UserAuthorizationList();
 		for (UserAuthorizationType userAuthorization : userAuthType.getValue().getUserAuthorization()) {
-			UserAuthorization userAuth = UserAuthorization.builder()
-				.authorizationCode(userAuthorization.getAuthorizationCode())
-				.educationCode(userAuthorization.getEducationCode())
-				.educationType(userAuthorization.getEducationType())
-				.build();
+			UserAuthorization userAuth = new UserAuthorization();
+			userAuth.setAuthorizationCode(userAuthorization.getAuthorizationCode());
+			userAuth.setEducationCode(userAuthorization.getEducationCode());
+			userAuth.setEducationType(userAuthorization.getEducationType());
 			
-			result.userAuthorizations.add(userAuth);
+			result.getUserAuthorizations().add(userAuth);
 		}
 
 		if (validate.equals(Validate.YES)) {
@@ -110,7 +104,7 @@ public class UserAuthorizationList implements ClaimModel {
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.FALSE);
 
 		UserAuthorizationListType authListType = objectFactory.createUserAuthorizationListType();
-		for (UserAuthorization userAuthorization : userAuthorizations) {
+		for (UserAuthorization userAuthorization : getUserAuthorizations()) {
 			UserAuthorizationType userAuth = objectFactory.createUserAuthorizationType();
 			userAuth.setAuthorizationCode(userAuthorization.getAuthorizationCode());
 			userAuth.setEducationCode(userAuthorization.getEducationCode());
@@ -139,11 +133,19 @@ public class UserAuthorizationList implements ClaimModel {
 
 	@Override
 	public String getAttributeName() {
-		return ATTRIBUTE_NAME;
+		return AttributeNameConstants.USER_AUTHORIZATIONS;
 	}
 
 	@Override
 	public ClaimType getClaimType() {
 		return ClaimType.ELEMENT;
+	}
+
+	public List<UserAuthorization> getUserAuthorizations() {
+		return userAuthorizations;
+	}
+
+	public void setUserAuthorizations(List<UserAuthorization> userAuthorizations) {
+		this.userAuthorizations = userAuthorizations;
 	}
 }

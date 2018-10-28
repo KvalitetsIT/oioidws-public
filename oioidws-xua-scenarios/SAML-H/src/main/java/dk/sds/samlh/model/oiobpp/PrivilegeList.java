@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import dk.sds.samlh.model.AttributeNameConstants;
 import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
@@ -22,15 +23,10 @@ import dk.sds.samlh.util.UrnUriValidator;
 import dk.sds.samlh.xsd.privilegesintermediate.ObjectFactory;
 import dk.sds.samlh.xsd.privilegesintermediate.PrivilegeGroupType;
 import dk.sds.samlh.xsd.privilegesintermediate.PrivilegeListType;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class PrivilegeList implements ClaimModel {
 	public enum PriviligeType { UserAuthorization, RegisteredPharmacist, CprNumberIdentifier, SeNumberIdentifier, CvrNumberIdentifier, ProductionNumberIdentifier };
 	private static Map<String, PriviligeType> prefixMap = new HashMap<>();
-	private static final String ATTRIBUTE_NAME = "dk:gov:saml:attribute:Privileges_intermediate";
 	
 	static {
 		prefixMap.put("urn:dk:healthcare:saml:userAuthorization:", PriviligeType.UserAuthorization);
@@ -44,11 +40,11 @@ public class PrivilegeList implements ClaimModel {
 	private List<PrivilegeGroup> privilegeGroups = new ArrayList<>();
 	
 	public void validate() throws ValidationException {
-		if (privilegeGroups.size() == 0) {
+		if (getPrivilegeGroups().size() == 0) {
 			throw new ValidationException("PrivilegeList should contain at least one PrivilegeGroup element.");
 		}
 
-		for (PrivilegeGroup privilegeGroup : privilegeGroups) {
+		for (PrivilegeGroup privilegeGroup : getPrivilegeGroups()) {
 			if (privilegeGroup.getPrivileges().size() == 0) {
 				throw new ValidationException("Found PrivilegeGroup element that doesn't contain any Privilege elements.");
 			}
@@ -165,53 +161,67 @@ public class PrivilegeList implements ClaimModel {
 		for (String prefix : prefixMap.keySet()) {
 			if (scope.startsWith(prefix)) {
 				switch (prefixMap.get(prefix)) {
-					case CprNumberIdentifier:
+					case CprNumberIdentifier: {
 						String cpr = scope.substring(prefix.length());
 
-						return PrivilegeGroup.builder()
-								.priviligeType(PriviligeType.CprNumberIdentifier)
-								.scopeValue(cpr)
-								.build();
-					case CvrNumberIdentifier:
+						PrivilegeGroup res = new PrivilegeGroup();
+						res.setPriviligeType(PriviligeType.CprNumberIdentifier);
+						res.setScopeValue(cpr);
+
+						return res;
+					}
+					case CvrNumberIdentifier: {
 						String cvr = scope.substring(prefix.length());
 
-						return PrivilegeGroup.builder()
-								.priviligeType(PriviligeType.CvrNumberIdentifier)
-								.scopeValue(cvr)
-								.build();
-					case ProductionNumberIdentifier:
+						PrivilegeGroup res = new PrivilegeGroup();
+						res.setPriviligeType(PriviligeType.CvrNumberIdentifier);
+						res.setScopeValue(cvr);
+
+						return res;
+					}
+					case ProductionNumberIdentifier: {
 						String pNumber = scope.substring(prefix.length());
 
-						return PrivilegeGroup.builder()
-								.priviligeType(PriviligeType.ProductionNumberIdentifier)
-								.scopeValue(pNumber)
-								.build();
-					case RegisteredPharmacist:
+						PrivilegeGroup res = new PrivilegeGroup();
+						res.setPriviligeType(PriviligeType.ProductionNumberIdentifier);
+						res.setScopeValue(pNumber);
+						
+						return res;
+					}
+					case RegisteredPharmacist: {
 						String pharmacist = scope.substring(prefix.length());
 
-						return PrivilegeGroup.builder()
-								.priviligeType(PriviligeType.RegisteredPharmacist)
-								.scopeValue(pharmacist)
-								.build();
-					case SeNumberIdentifier:
+						PrivilegeGroup res = new PrivilegeGroup();
+						res.setPriviligeType(PriviligeType.RegisteredPharmacist);
+						res.setScopeValue(pharmacist);
+						
+						return res;
+					}
+					case SeNumberIdentifier: {
 						String se = scope.substring(prefix.length());
 
-						return PrivilegeGroup.builder()
-								.priviligeType(PriviligeType.SeNumberIdentifier)
-								.scopeValue(se)
-								.build();
-					case UserAuthorization:
+						PrivilegeGroup res = new PrivilegeGroup();
+						res.setPriviligeType(PriviligeType.SeNumberIdentifier);
+						res.setScopeValue(se);
+						
+						return res;
+					}
+					case UserAuthorization: {
 						String scopeValue = scope.substring(prefix.length());
 						
 						String[] tokens = scopeValue.split(":");
 						if (tokens.length == 4 && "AuthorizationCode".equals(tokens[0]) && "EducationCode".equals(tokens[2])) {
-							return PrivilegeGroup.builder()
-									.priviligeType(PriviligeType.UserAuthorization)
-									.scopeAuthorizationCode(tokens[1])
-									.scopeEducationCode(tokens[3])
-									.build();
+							
+							PrivilegeGroup res = new PrivilegeGroup();
+							res.setPriviligeType(PriviligeType.UserAuthorization);
+							res.setScopeAuthorizationCode(tokens[1]);
+							res.setScopeEducationCode(tokens[3]);
+							
+							return res;
 						}
+
 						break;
+					}
 				}
 			}
 		}
@@ -233,11 +243,19 @@ public class PrivilegeList implements ClaimModel {
 
 	@Override
 	public String getAttributeName() {
-		return ATTRIBUTE_NAME;
+		return AttributeNameConstants.PRIVILEGES_INTERMEDIATE;
 	}
 
 	@Override
 	public ClaimType getClaimType() {
 		return ClaimType.TEXT;
+	}
+
+	public List<PrivilegeGroup> getPrivilegeGroups() {
+		return privilegeGroups;
+	}
+
+	public void setPrivilegeGroups(List<PrivilegeGroup> privilegeGroups) {
+		this.privilegeGroups = privilegeGroups;
 	}
 }

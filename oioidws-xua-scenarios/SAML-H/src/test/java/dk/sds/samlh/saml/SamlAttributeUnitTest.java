@@ -32,12 +32,13 @@ public class SamlAttributeUnitTest {
 
 	@Test
 	public void testClaimGeneration() throws Exception {
+		UserAuthorization ua = new UserAuthorization();
+		ua.setAuthorizationCode("341KY");
+		ua.setEducationCode("7170");
+		ua.setEducationType("Læge");
+		
 		UserAuthorizationList auth = new UserAuthorizationList();
-		auth.getUserAuthorizations().add(UserAuthorization.builder()
-				.authorizationCode("341KY")
-				.educationCode("7170")
-				.educationType("Læge")
-				.build());
+		auth.getUserAuthorizations().add(ua);
 		
 		Element claim = auth.generateClaim(Validate.YES);
 
@@ -49,13 +50,12 @@ public class SamlAttributeUnitTest {
 
 	@Test
 	public void testElementToAttributeConversion() throws Exception {		
-		ProviderIdentifier providerIdentifier = ProviderIdentifier.builder()
-				.assigningAuthorityName("Sundhedsvæsenets Organisationsregister (SOR)")
-				.displayable(false)
-				.extension("8041000016000^Sydvestjysk Sygehus")
-				.root("1.2.208.176.1.1")
-				.xsiType("II")
-				.build();
+		ProviderIdentifier providerIdentifier = new ProviderIdentifier();
+		providerIdentifier.setAssigningAuthorityName("Sundhedsvæsenets Organisationsregister (SOR)");
+		providerIdentifier.setDisplayable(false);
+		providerIdentifier.setExtension("8041000016000^Sydvestjysk Sygehus");
+		providerIdentifier.setRoot("1.2.208.176.1.1");
+		providerIdentifier.setXsiType("II");
 		
 		Element element = providerIdentifier.generateElement(Validate.YES);
 

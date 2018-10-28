@@ -9,21 +9,14 @@ import javax.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Element;
 
+import dk.sds.samlh.model.AttributeNameConstants;
 import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.ModelUtil;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
 import dk.sds.samlh.xsd.purposeofuse.ObjectFactory;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
-public class PurposeOfUse implements ClaimModel {
-	private static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xspa:1.0:subject:purposeofuse";
-	
+public class PurposeOfUse implements ClaimModel {	
 	private Code code;
 	private String codeSystem;
 	private String codeSystemName;
@@ -35,13 +28,13 @@ public class PurposeOfUse implements ClaimModel {
 	}
 
 	public void validate() throws ValidationException {
-		if (this.xsiType == null || !this.xsiType.equals("CE")) {
+		if (this.getXsiType() == null || !this.getXsiType().equals("CE")) {
 			throw new ValidationException("Type must be set to CE.");
 		}
-		else if (this.code == null) {
+		else if (this.getCode() == null) {
 			throw new ValidationException("Code attribute is mandatory.");
 		}
-		else if (this.codeSystem == null) {
+		else if (this.getCodeSystem() == null) {
 			throw new ValidationException("CodeSystem attribute is mandatory.");
 		}
 	}
@@ -64,13 +57,12 @@ public class PurposeOfUse implements ClaimModel {
 		Unmarshaller unmarsheller = context.createUnmarshaller();
 		dk.sds.samlh.xsd.purposeofuse.PurposeOfUse pouType = (dk.sds.samlh.xsd.purposeofuse.PurposeOfUse) unmarsheller.unmarshal(ModelUtil.getSecureSource(object));
 
-		PurposeOfUse result = PurposeOfUse.builder()
-				.code(pouType.getCode() != null ? Code.valueOf(pouType.getCode()) : null)
-				.codeSystem(pouType.getCodeSystem())
-				.xsiType(pouType.getXsiType())
-				.codeSystemName(pouType.getCodeSystemName())
-				.displayName(pouType.getDisplayName())
-				.build();
+		PurposeOfUse result = new PurposeOfUse();
+		result.code = (pouType.getCode() != null ? Code.valueOf(pouType.getCode()) : null);
+		result.codeSystem = pouType.getCodeSystem();
+		result.xsiType = pouType.getXsiType();
+		result.codeSystemName = pouType.getCodeSystemName();
+		result.displayName = pouType.getDisplayName();
 
 		if (validate.equals(Validate.YES)) {
 			result.validate();
@@ -93,11 +85,11 @@ public class PurposeOfUse implements ClaimModel {
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
 		dk.sds.samlh.xsd.purposeofuse.PurposeOfUse object = objectFactory.createPurposeOfUse();
-		object.setCode(this.code.toString());
-		object.setCodeSystem(this.codeSystem);
-		object.setXsiType(this.xsiType);
-		object.setCodeSystemName(this.codeSystemName);
-		object.setDisplayName(this.displayName);
+		object.setCode(this.getCode().toString());
+		object.setCodeSystem(this.getCodeSystem());
+		object.setXsiType(this.getXsiType());
+		object.setCodeSystemName(this.getCodeSystemName());
+		object.setDisplayName(this.getDisplayName());
 
 		jaxbMarshaller.marshal(object, writer);
 		return writer.toString();
@@ -105,11 +97,51 @@ public class PurposeOfUse implements ClaimModel {
 
 	@Override
 	public String getAttributeName() {
-		return ATTRIBUTE_NAME;
+		return AttributeNameConstants.PURPOSE_OF_USE;
 	}
 
 	@Override
 	public ClaimType getClaimType() {
 		return ClaimType.ELEMENT;
+	}
+
+	public Code getCode() {
+		return code;
+	}
+
+	public void setCode(Code code) {
+		this.code = code;
+	}
+
+	public String getCodeSystem() {
+		return codeSystem;
+	}
+
+	public void setCodeSystem(String codeSystem) {
+		this.codeSystem = codeSystem;
+	}
+
+	public String getCodeSystemName() {
+		return codeSystemName;
+	}
+
+	public void setCodeSystemName(String codeSystemName) {
+		this.codeSystemName = codeSystemName;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getXsiType() {
+		return xsiType;
+	}
+
+	public void setXsiType(String xsiType) {
+		this.xsiType = xsiType;
 	}
 }

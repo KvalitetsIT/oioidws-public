@@ -1,18 +1,11 @@
 package dk.sds.samlh.model.childrenincustody;
 
+import dk.sds.samlh.model.AttributeNameConstants;
 import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
 public class ChildrenInCustody implements ClaimModel {
-	private static final String ATTRIBUTE_NAME = "dk:healthcare:saml:attribute:ChildrenInCustody";
-
 	public enum CprType {
 		CPR("urn:dk:gov:saml:cprNumberIdentifier"), ECPR("urn:dk:healthcare:saml:attribute:ECprNumberIdentifier");
 
@@ -41,22 +34,22 @@ public class ChildrenInCustody implements ClaimModel {
 	private String value;
 
 	public void validate() throws ValidationException {
-		if (cprType == null) {
+		if (getCprType() == null) {
 			throw new ValidationException("CprType not set");
 		}
 
-		if (value == null || value.length() != 10) {
+		if (getValue() == null || getValue().length() != 10) {
 			throw new ValidationException("Value must have 10 characters");
 		}
 
-		switch (this.cprType) {
+		switch (this.getCprType()) {
 			case CPR:
 				try {
-					int day = Integer.parseInt(value.substring(0, 2));
-					int month = Integer.parseInt(value.substring(2, 4));
-					int year = Integer.parseInt(value.substring(4, 6));
+					int day = Integer.parseInt(getValue().substring(0, 2));
+					int month = Integer.parseInt(getValue().substring(2, 4));
+					int year = Integer.parseInt(getValue().substring(4, 6));
 
-					int end = Integer.parseInt(value.substring(6, 9));
+					int end = Integer.parseInt(getValue().substring(6, 9));
 					if (day < 0 || day > 31 || month < 0 || month > 12 || year < 0 || year > 99 || end < 0 || end > 9999) {
 						throw new ValidationException("Not a legal date");
 					}
@@ -67,11 +60,11 @@ public class ChildrenInCustody implements ClaimModel {
 				break;
 			case ECPR:
 				try {
-					int day = Integer.parseInt(value.substring(0, 2));
-					int month = Integer.parseInt(value.substring(2, 4));
-					int year = Integer.parseInt(value.substring(4, 6));
+					int day = Integer.parseInt(getValue().substring(0, 2));
+					int month = Integer.parseInt(getValue().substring(2, 4));
+					int year = Integer.parseInt(getValue().substring(4, 6));
 
-					if (!value.substring(6, 9).matches("^[a-zA-Z0-9]*$")) {
+					if (!getValue().substring(6, 9).matches("^[a-zA-Z0-9]*$")) {
 						throw new ValidationException("E-CPR control value is invalid.");
 					}
 					else if (day < 0 || day > 31 || month < 0 || month > 12 || year < 0 || year > 99) {
@@ -99,7 +92,9 @@ public class ChildrenInCustody implements ClaimModel {
 			String cprTypeValue = object.substring(0, object.lastIndexOf(":"));
 			CprType cprType = (cprTypeValue != null) ? CprType.fromValue(cprTypeValue) : null;
 
-			result = ChildrenInCustody.builder().cprType(cprType).value(value).build();
+			result = new ChildrenInCustody();
+			result.setCprType(cprType);
+			result.setValue(value);
 		}
 		catch (Exception e) {
 			throw new ValidationException("Unable to parse string", e);
@@ -117,16 +112,32 @@ public class ChildrenInCustody implements ClaimModel {
 			validate();
 		}
 
-		return cprType.getValue() + ':' + value;
+		return getCprType().getValue() + ':' + getValue();
 	}
 
 	@Override
 	public String getAttributeName() {
-		return ATTRIBUTE_NAME;
+		return AttributeNameConstants.CHILDREN_IN_CUSTODY;
 	}
 
 	@Override
 	public ClaimType getClaimType() {
 		return ClaimType.TEXT;
+	}
+
+	public CprType getCprType() {
+		return cprType;
+	}
+
+	public void setCprType(CprType cprType) {
+		this.cprType = cprType;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

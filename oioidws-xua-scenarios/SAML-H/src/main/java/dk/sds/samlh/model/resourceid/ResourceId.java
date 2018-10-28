@@ -1,26 +1,19 @@
 package dk.sds.samlh.model.resourceid;
 
+import dk.sds.samlh.model.AttributeNameConstants;
 import dk.sds.samlh.model.ClaimModel;
 import dk.sds.samlh.model.Validate;
 import dk.sds.samlh.model.ValidationException;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
 public class ResourceId implements ClaimModel {
-	private static final String ATTRIBUTE_NAME = "urn:oasis:names:tc:xacml:2.0:resource:resource-id";
-
 	private String patientId;
 	private String oid;
 
 	private void validate() throws ValidationException {
-		if (patientId == null || patientId.isEmpty()) {
+		if (getPatientId() == null || getPatientId().isEmpty()) {
 			throw new ValidationException("PatientId is mandatory.");
 		}
-		else if (oid == null || oid.isEmpty()) {
+		else if (getOid() == null || getOid().isEmpty()) {
 			throw new ValidationException("OId is mandatory.");
 		}
 	}
@@ -33,10 +26,9 @@ public class ResourceId implements ClaimModel {
 			throw new ValidationException("not a legal input string:" + object);
 		}
 		
-		ResourceId result = ResourceId.builder()
-				.patientId(fragments[0].replace("^^^", ""))
-				.oid(fragments[1])
-				.build();
+		ResourceId result = new ResourceId();
+		result.patientId = fragments[0].replace("^^^", "");
+		result.oid = fragments[1];
 		
 		if (validate == Validate.YES) {
 			result.validate();
@@ -50,16 +42,32 @@ public class ResourceId implements ClaimModel {
 			validate();
 		}
 
-		return patientId + "^^^&" + oid + "&ISO";
+		return getPatientId() + "^^^&" + getOid() + "&ISO";
 	}
 
 	@Override
 	public String getAttributeName() {
-		return ATTRIBUTE_NAME;
+		return AttributeNameConstants.RESOURCE_ID;
 	}
 
 	@Override
 	public ClaimType getClaimType() {
 		return ClaimType.TEXT;
+	}
+
+	public String getPatientId() {
+		return patientId;
+	}
+
+	public void setPatientId(String patientId) {
+		this.patientId = patientId;
+	}
+
+	public String getOid() {
+		return oid;
+	}
+
+	public void setOid(String oid) {
+		this.oid = oid;
 	}
 }
