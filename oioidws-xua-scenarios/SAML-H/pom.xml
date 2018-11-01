@@ -5,7 +5,7 @@
 	<groupId>dk.sds.xua</groupId>
 	<artifactId>saml-h-util</artifactId>
 	<name>XUA SAML-H Utility</name>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 
 	<build>
