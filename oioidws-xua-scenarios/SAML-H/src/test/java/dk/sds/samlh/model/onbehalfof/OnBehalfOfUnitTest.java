@@ -51,7 +51,7 @@ public class OnBehalfOfUnitTest {
 		assertEquals(null, obo1.getPseudonym());
 		assertEquals(obo1String, obo1.generate(Validate.NO));
 		
-		String obo2String = "urn:dk:healthcare:saml:attribute:actThroughProcurationBy:ECprNumberIdentifier:010101777E";
+		String obo2String = "urn:dk:healthcare:saml:actThroughProcurationBy:ECprNumberIdentifier:010101777E";
 		OnBehalfOf obo2 = OnBehalfOf.parse(obo2String, Validate.YES);
 		assertEquals(null, obo2.getAuthorizationCode());
 		assertEquals(null, obo2.getEducationCode());
@@ -61,7 +61,7 @@ public class OnBehalfOfUnitTest {
 		assertEquals(null, obo2.getPseudonym());
 		assertEquals(obo2String, obo2.generate(Validate.NO));
 		
-		String obo3String = "urn:dk:healthcare:saml:attribute:actThroughProcurationBy:PersistentPseudonym:Test";
+		String obo3String = "urn:dk:healthcare:saml:actThroughProcurationBy:PersistentPseudonym:Test";
 		OnBehalfOf obo3 = OnBehalfOf.parse(obo3String, Validate.YES);
 		assertEquals(null, obo3.getAuthorizationCode());
 		assertEquals(null, obo3.getEducationCode());
@@ -84,7 +84,7 @@ public class OnBehalfOfUnitTest {
 		assertEquals(null, obo4.getPseudonym());
 		assertEquals(obo4String, obo4.generate(Validate.NO));
 		
-		String obo5String = "urn:dk:healthcare:saml:attribute:actThroughCustodyOver:ECprNumberIdentifier:010101777E";
+		String obo5String = "urn:dk:healthcare:saml:actThroughCustodyOver:ECprNumberIdentifier:010101777E";
 		OnBehalfOf obo5 = OnBehalfOf.parse(obo5String, Validate.YES);
 		assertEquals(null, obo5.getAuthorizationCode());
 		assertEquals(null, obo5.getEducationCode());
@@ -94,7 +94,7 @@ public class OnBehalfOfUnitTest {
 		assertEquals(null, obo5.getPseudonym());
 		assertEquals(obo5String, obo5.generate(Validate.NO));
 		
-		String obo6String = "urn:dk:healthcare:saml:attribute:actThroughCustodyOver:PersistentPseudonym:Test";
+		String obo6String = "urn:dk:healthcare:saml:actThroughCustodyOver:PersistentPseudonym:Test";
 		OnBehalfOf obo6 = OnBehalfOf.parse(obo6String, Validate.YES);
 		assertEquals(null, obo6.getAuthorizationCode());
 		assertEquals(null, obo6.getEducationCode());
@@ -117,7 +117,7 @@ public class OnBehalfOfUnitTest {
 		assertEquals(null, obo7.getPseudonym());
 		assertEquals(obo7String, obo7.generate(Validate.NO));
 		
-		String obo8String = "urn:dk:healthcare:saml:attribute:actThroughDelegationByRegisteredPharmacist:ECprNumberIdentifier:010101777E";
+		String obo8String = "urn:dk:healthcare:saml:actThroughDelegationByRegisteredPharmacist:ECprNumberIdentifier:010101777E";
 		OnBehalfOf obo8 = OnBehalfOf.parse(obo8String, Validate.YES);
 		assertEquals(null, obo8.getAuthorizationCode());
 		assertEquals(null, obo8.getEducationCode());
@@ -127,7 +127,7 @@ public class OnBehalfOfUnitTest {
 		assertEquals(null, obo8.getPseudonym());
 		assertEquals(obo8String, obo8.generate(Validate.NO));
 		
-		String obo9String = "urn:dk:healthcare:saml:attribute:actThroughDelegationByRegisteredPharmacist:PersistentPseudonym:Test";
+		String obo9String = "urn:dk:healthcare:saml:actThroughDelegationByRegisteredPharmacist:PersistentPseudonym:Test";
 		OnBehalfOf obo9 = OnBehalfOf.parse(obo9String, Validate.YES);
 		assertEquals(null, obo9.getAuthorizationCode());
 		assertEquals(null, obo9.getEducationCode());

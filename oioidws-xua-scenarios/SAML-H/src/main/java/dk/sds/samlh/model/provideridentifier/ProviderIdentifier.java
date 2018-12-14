@@ -24,8 +24,8 @@ public class ProviderIdentifier implements ClaimModel {
 	private Boolean displayable;
 
 	public void validate() throws ValidationException {
-		if (this.getXsiType() == null || !this.getXsiType().equals("II")) {
-			throw new ValidationException("Type must be set to II.");
+		if (this.getXsiType() == null) {
+			throw new ValidationException("Type cannot be null.");
 		}
 		else if (this.getRoot() == null) {
 			throw new ValidationException("Root attribute is mandatory.");

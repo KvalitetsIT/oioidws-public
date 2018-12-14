@@ -13,11 +13,11 @@ import dk.sds.samlh.model.ValidationException;
 public class OnBehalfOf implements ClaimModel {
 	private static final String userAuthorizationPattern = "urn:dk:healthcare:saml:(.+):userAuthorization:AuthorizationCode:(.+):EducationCode:(.+)";
 	private static final String cprPattern = "urn:dk:healthcare:saml:(.+):cprNumberIdentifier:(.+)";
-	private static final String ecprPattern = "urn:dk:healthcare:saml:attribute:(.+):ECprNumberIdentifier:(.+)";
-	private static final String pseudonymPattern = "urn:dk:healthcare:saml:attribute:(.+):PersistentPseudonym:(.+)";
+	private static final String ecprPattern = "urn:dk:healthcare:saml:(.+):ECprNumberIdentifier:(.+)";
+	private static final String pseudonymPattern = "urn:dk:healthcare:saml:(.+):PersistentPseudonym:(.+)";
 
 	private static final String cprPrefix = "urn:dk:healthcare:saml:";
-	private static final String ecprPseudonymPrefix = "urn:dk:healthcare:saml:attribute:";
+	private static final String ecprPseudonymPrefix = "urn:dk:healthcare:saml:";
 	private static final String byAuthorizedHealthcareProfessionalPrefix = "urn:dk:healthcare:saml:";
 
 	public enum Legislation {

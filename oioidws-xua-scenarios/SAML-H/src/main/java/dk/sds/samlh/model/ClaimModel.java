@@ -43,15 +43,15 @@ public interface ClaimModel {
 	
 	default Element generateClaim(Validate validate) throws ParserConfigurationException, DOMException, ValidationException, JAXBException, SAXException, IOException {
 		Document doc = ModelUtil.createDocument();
-		Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "wst:Claims");
+		Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Claims");
 		claimsElement.setAttributeNS(null, "Dialect", "http://docs.oasis-open.org/wsfed/authorization/200706/authclaims");
 		doc.appendChild(claimsElement);
 		
-		Element claimType = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "auth:ClaimType");
+		Element claimType = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "ClaimType");
 		claimType.setAttributeNS(null, "Uri", getAttributeName());
 		claimsElement.appendChild(claimType);
 
-		Element claimValue = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "auth:Value");
+		Element claimValue = doc.createElementNS("http://docs.oasis-open.org/wsfed/authorization/200706", "Value");
 
 		if (getClaimType().equals(ClaimType.ELEMENT)) {
 			Element element = generateElement(validate);

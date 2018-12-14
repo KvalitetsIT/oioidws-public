@@ -56,7 +56,7 @@ public class PrivilegeListUnitTest {
 	public void testParsePharmacist() throws JAXBException, ValidationException {
 		String xmlString =
 				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
-				"   <PrivilegeGroup Scope=\"urn:dk:healthcare:saml:RegisteredPharmacistCPR:0101011118\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:healthcare:saml:registeredPharmacistCPR:0101011118\">\n" + 
 				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
 				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
 				"   </PrivilegeGroup>\n" +
@@ -130,6 +130,48 @@ public class PrivilegeListUnitTest {
 
 		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
 		assertTrue(firstGroup.getScopeValue().equals("12345678"));
+	}
+
+	@Test
+	public void testParseYderNumberIdentifier() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:healthcare:saml:yderNumberIdentifier:18244\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getYderNumberIdentifier().equals("18244"));
+		assertTrue(firstGroup.getRegionCode() == null);
+	}
+
+	@Test
+	public void testParseYderNumberIdentifierWithRegionCode() throws JAXBException, ValidationException {
+		String xmlString =
+				"<bpp:PrivilegeList xmlns:bpp=\"http://itst.dk/oiosaml/basic_privilege_profile\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" + 
+				"   <PrivilegeGroup Scope=\"urn:dk:healthcare:saml:yderNumberIdentifier:18244:regionCode:81\">\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>\n" + 
+				"      <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>\n" + 
+				"   </PrivilegeGroup>\n" +
+				"</bpp:PrivilegeList>";
+		
+		PrivilegeList pl = PrivilegeList.parse(xmlString, Validate.YES);
+
+		assertNotNull(pl);
+		assertNotNull(pl.getPrivilegeGroups());
+		assertTrue(pl.getPrivilegeGroups().size() == 1);
+
+		PrivilegeGroup firstGroup = pl.getPrivilegeGroups().get(0);
+		assertTrue(firstGroup.getYderNumberIdentifier().equals("18244"));
+		assertTrue(firstGroup.getRegionCode().equals("81"));
 	}
 	
 	@Test

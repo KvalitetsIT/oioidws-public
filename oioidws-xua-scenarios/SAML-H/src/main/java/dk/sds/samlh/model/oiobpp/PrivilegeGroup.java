@@ -9,6 +9,8 @@ public class PrivilegeGroup {
 	private String scopeValue; // non-null for everything except UserAuthorization
 	private String scopeEducationCode; // non-null for UserAuthorization
 	private String scopeAuthorizationCode; // non-null for UserAuthorization
+	private String yderNumberIdentifier; // non-null for YderNumberIdentifier
+	private String regionCode; // might be non-null for YderNumberIdentifier
 	private List<String> privileges;
 	
 	public PriviligeType getPriviligeType() {
@@ -49,5 +51,21 @@ public class PrivilegeGroup {
 	
 	public void setPrivileges(List<String> privileges) {
 		this.privileges = privileges;
+	}
+
+	public String getRegionCode() {
+		return regionCode;
+	}
+	
+	public void setRegionCode(String regionCode) {
+		this.regionCode = regionCode;
+	}
+
+	public String getYderNumberIdentifier() {
+		return yderNumberIdentifier;
+	}
+	
+	public void setYderNumberIdentifier(String yderNumberIdentifier) {
+		this.yderNumberIdentifier = yderNumberIdentifier;
 	}
 }

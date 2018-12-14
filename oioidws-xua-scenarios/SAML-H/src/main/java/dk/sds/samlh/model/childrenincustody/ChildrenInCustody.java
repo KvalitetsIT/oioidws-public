@@ -7,7 +7,7 @@ import dk.sds.samlh.model.ValidationException;
 
 public class ChildrenInCustody implements ClaimModel {
 	public enum CprType {
-		CPR("urn:dk:gov:saml:cprNumberIdentifier"), ECPR("urn:dk:healthcare:saml:attribute:ECprNumberIdentifier");
+		CPR("urn:dk:gov:saml:cprNumberIdentifier"), ECPR("urn:dk:healthcare:saml:ECprNumberIdentifier");
 
 		private String value;
 

@@ -28,8 +28,8 @@ public class PurposeOfUse implements ClaimModel {
 	}
 
 	public void validate() throws ValidationException {
-		if (this.getXsiType() == null || !this.getXsiType().equals("CE")) {
-			throw new ValidationException("Type must be set to CE.");
+		if (this.getXsiType() == null) {
+			throw new ValidationException("Type cannot be null.");
 		}
 		else if (this.getCode() == null) {
 			throw new ValidationException("Code attribute is mandatory.");

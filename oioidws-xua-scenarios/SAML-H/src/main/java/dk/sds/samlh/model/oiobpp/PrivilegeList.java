@@ -25,12 +25,13 @@ import dk.sds.samlh.xsd.privilegesintermediate.PrivilegeGroupType;
 import dk.sds.samlh.xsd.privilegesintermediate.PrivilegeListType;
 
 public class PrivilegeList implements ClaimModel {
-	public enum PriviligeType { UserAuthorization, RegisteredPharmacist, CprNumberIdentifier, SeNumberIdentifier, CvrNumberIdentifier, ProductionNumberIdentifier };
+	public enum PriviligeType { UserAuthorization, RegisteredPharmacist, YderNumberIdentifier, CprNumberIdentifier, SeNumberIdentifier, CvrNumberIdentifier, ProductionNumberIdentifier };
 	private static Map<String, PriviligeType> prefixMap = new HashMap<>();
 	
 	static {
 		prefixMap.put("urn:dk:healthcare:saml:userAuthorization:", PriviligeType.UserAuthorization);
-		prefixMap.put("urn:dk:healthcare:saml:RegisteredPharmacistCPR:", PriviligeType.RegisteredPharmacist);
+		prefixMap.put("urn:dk:healthcare:saml:registeredPharmacistCPR:", PriviligeType.RegisteredPharmacist);
+		prefixMap.put("urn:dk:healthcare:saml:yderNumberIdentifier:", PriviligeType.YderNumberIdentifier);
 		prefixMap.put("urn:dk:gov:saml:cprNumberIdentifier:", PriviligeType.CprNumberIdentifier);
 		prefixMap.put("urn:dk:gov:saml:seNumberIdentifier:", PriviligeType.SeNumberIdentifier);
 		prefixMap.put("urn:dk:gov:saml:cvrNumberIdentifier:", PriviligeType.CvrNumberIdentifier);
@@ -50,6 +51,11 @@ public class PrivilegeList implements ClaimModel {
 			}
 			
 			switch (privilegeGroup.getPriviligeType()) {
+				case YderNumberIdentifier:
+					if (privilegeGroup.getYderNumberIdentifier() == null) {
+						throw new ValidationException("yderNumberIdentifier cannot be null");						
+					}
+					break;
 				case UserAuthorization:
 					if (privilegeGroup.getScopeAuthorizationCode() == null || privilegeGroup.getScopeAuthorizationCode().length() != 5) {
 						throw new ValidationException("authorizationCode cannot be null, and must be 5 characters in length");
@@ -145,6 +151,15 @@ public class PrivilegeList implements ClaimModel {
 				case UserAuthorization:
 					privilegeGroupType.setScope("urn:dk:healthcare:saml:userAuthorization:AuthorizationCode:" + privilegeGroup.getScopeAuthorizationCode() + ":EducationCode:" + privilegeGroup.getScopeEducationCode());
 					break;
+				case YderNumberIdentifier:
+					if (privilegeGroup.getRegionCode() != null) {
+						privilegeGroupType.setScope("urn:dk:healthcare:saml:yderNumberIdentifier:" + privilegeGroup.getYderNumberIdentifier() + ":regionCode:" + privilegeGroup.getRegionCode());
+					}
+					else {
+						privilegeGroupType.setScope("urn:dk:healthcare:saml:yderNumberIdentifier:" + privilegeGroup.getYderNumberIdentifier());
+					}
+					
+					break;
 			}
 			
 			privilegeList.getPrivilegeGroup().add(privilegeGroupType);
@@ -221,6 +236,28 @@ public class PrivilegeList implements ClaimModel {
 						}
 
 						break;
+					}
+					case YderNumberIdentifier: {
+						String scopeValue = scope.substring(prefix.length());
+						
+						String[] tokens = scopeValue.split(":");
+						if (tokens.length == 3 && "regionCode".equals(tokens[1])) {
+							PrivilegeGroup res = new PrivilegeGroup();
+							res.setPriviligeType(PriviligeType.YderNumberIdentifier);
+							res.setYderNumberIdentifier(tokens[0]);
+							res.setRegionCode(tokens[2]);
+							
+							return res;
+						}
+						else if (tokens.length == 1) {
+							PrivilegeGroup res = new PrivilegeGroup();
+							res.setPriviligeType(PriviligeType.YderNumberIdentifier);
+							res.setYderNumberIdentifier(tokens[0]);
+							
+							return res;							
+						}
+
+						break;						
 					}
 				}
 			}

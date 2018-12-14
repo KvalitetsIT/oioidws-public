@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,6 +21,8 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -55,6 +58,24 @@ public class ModelUtil {
 		catch (Exception ex) {
 			throw new JAXBException("Failed to securely unmarshall object", ex);
 		}
+	}
+	
+	public static Element getElement(Document doc, QName elementQName) throws Exception {
+		NodeList nl = doc.getElementsByTagNameNS(elementQName.getNamespaceURI(), elementQName.getLocalPart());
+
+		if (nl.getLength() == 0) {
+			nl = doc.getElementsByTagNameNS("*", elementQName.getLocalPart());
+
+			if (nl.getLength() == 0) {
+				nl = doc.getElementsByTagName(elementQName.getPrefix() + ":" + elementQName.getLocalPart());
+			}
+
+			if (nl.getLength() == 0) {
+				throw new Exception("QName does not exist: " + elementQName.toString());
+			}
+		}
+
+		return (Element) nl.item(0);
 	}
 	
 	private static SAXParserFactory getSecureSAXParserFactory() throws SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException {
